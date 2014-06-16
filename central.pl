@@ -4,7 +4,7 @@
 #	Programa de Registro de Compras y Ventas
 #  
 #	Creado : 02/06/2014
-#	UM : 03/06/2014 
+#	UM : 15/06/2014 
 
 use prg::BaseDatos;
 use strict;
@@ -37,14 +37,14 @@ my $ut = Utiles->crea($vp);
 
 $version .= " con $pv, Tk $Tk::version y ";
 $version .= "SQLite $bd->{'baseDatos'}->{sqlite_version} en $^O\n";
-print "\nIniciando Programa Registro de Compras\n$version";
+print "\nIniciando Programa Registro de Compras y Ventas\n$version";
 
 # Creación de la interfaz gráfica
 my %tp = $ut->tipos();
 # Define y prepara la tamaño y ubicación de la ventana
 $vp->geometry("480x430+2+2");
 $vp->resizable(1,1);
-$vp->title("Registro de Compras");
+$vp->title("Registro de Compras y Ventas");
 
 # Define marco para mostrar información
 my $mt = $vp->Scrolled('Text', -scrollbars=> 'e', -bg=> '#F2FFE6',
@@ -114,24 +114,47 @@ sub opConfigura {
  ['command' => "Grupos", -command => sub { require prg::Grupos; 
 	Grupos->crea($vp, $bd, $ut, $mt ); } ], "-", 
  ['command' => "Unidades", -command => sub { require prg::UMedida;
-	UMedida->crea($vp, $bd, $ut, $mt); } ] ]
+	UMedida->crea($vp, $bd, $ut, $mt); } ], "-",
+ ['command' => "Menú", -command => sub { require prg::Menu;
+	Menu->crea($vp, $bd, $ut, $mt); } ] ]
 }
 
 sub opRegistra {
 [['command' => "Compras", -command => sub { require prg::Compras;
 	Compras->crea($vp, $bd, $ut, '', $mt); } ],
  ['command' => "Devoluciones", -command => sub { require prg::Devuelve; 
-	Devuelve->crea($vp, $bd, $ut, $mt ); } ], "-", 
+	Devuelve->crea($vp, $bd, $ut, $mt ); } ], 
+ ['command' => "Gastos", -command => sub { require prg::Gastos; 
+	Gastos->crea($vp, $bd, $ut, $mt ); } ], 	"-", 
+ ['command' => "Comandas", -command => sub { require prg::Comandas; 
+	Comandas->crea($vp, $bd, $ut, $mt ); } ],
+ ['command' => "Ventas", -command => sub { require prg::Ventas; 
+	Ventas->crea($vp, $bd, $ut, $mt ); } ], "-",
  ['command' => "Proveedores", -command => sub { require prg::DatosT;
 	DatosT->crea($vp, $bd, $ut, $mt); } ] ]
 }
 
 sub opConsulta {
-[ 
-  ['command' => "Resumen compras", -command => sub { require prg::Resumen;
-	Resumen->crea($vp, $mt, $bd, $ut);} ],
-  ['command' => "Estadísticas", -command => sub { require prg::Estadis;
-	Estadis->crea($vp, $mt, $bd, $ut);} ] ]
+[ ['command' => "Resultados", -command => sub { require prg::Resultado;
+ 	Resultado->crea($vp, $mt, $ut, $bd);} ], 
+  ['cascade' => "Resúmenes", -tearoff => 0, -menuitems => opResumen() ],
+  ['cascade' => "Estadísticas", -tearoff => 0, -menuitems => opEstadis() ] ]
+}
+
+sub opResumen {
+[['command' => "Caja", -command => sub { require prg::RCaja;
+	RCaja->crea($vp, $mt, $ut, $bd);} ], "-",
+['command' => "Compras", -command => sub { require prg::RCompras;
+	RCompras->crea($vp, $mt, $ut, $bd);} ], 
+ ['command' => "Ventas", -command => sub { require prg::RVentas;
+ 	RVentas->crea($vp, $mt, $ut, $bd);} ] ]
+}
+
+sub opEstadis {
+[['command' => "Compras", -command => sub { require prg::ECompras;
+	ECompras->crea($vp, $mt, $ut, $bd);} ], 
+ ['command' => "Ventas", -command => sub { require prg::EVentas;
+ 	EVentas->crea($vp, $mt, $ut, $bd);} ]]
 }
 
 sub listados ( $ )

@@ -2,13 +2,15 @@ RCyV
 ====
 
 Un sistema registro de control de compras y ventas, pensado en pequeños 
-tipo cafeterías.
+negocios tipo cafeterías.
 
 
-##Descripción
+##Breve descripción
 
 Este programa está basado en las condiciones legales existentes en Chile,
-en especial respecto de las normas tributarias. 
+en especial respecto de las normas tributarias. Su propósito es facilitar
+los controles administrativos básicos: compras, ventas y caja; permitiendo
+en forma adicional manejar estadísticas detalladas.
 
 ##Requisitos
 
@@ -30,29 +32,38 @@ en especial respecto de las normas tributarias.
 
 + Tener instalados todos los programas definidos como *Requisitos*
 + Disponer del programa *git*. En el sitio [github][] se pueden consultar
-las guías sobre cómo instalarlo en los distintos sistemas operativos. En  
-el caso de Linux están disponibles las interfaces gráficas que permiten 
-instalar paquetes y programas.
-
+las guías sobre cómo instalarlo en los distintos sistemas operativos.
 
    [github]: http://github.com/guides/home
 
 
 ### Verificar los requisitos
 
-Luego de haber cambiado de directorio, ejecutar el comando
+Una vez descargado e instalado el programa, cambiar al directorio 
+correspondiente (usualmente RCyV), y ejecutar el comando
 
 	perl modulos.pl
 	
-Esto permitirá verificar que estén instalados todos los módulos Perl que
-necesita el programa *Quipu*. Si falta alguno, deberá ser instalado antes 
+Esto permitirá comprobar que estén instalados todos los módulos Perl que
+necesita el programa. Si falta alguno, deberá ser instalado antes 
 de seguir con la configuración. Se puede usar el programa `cpan` o alguna
 interfaz gráfica disponible en el sistema operativo.
 
+### Crear la base de datos
+
+Antes de iniciar el programa, se debe crear la base de datos, utilizando
+el comando
+
+	perl creaTablas.pl <año>
+	
+en donde <año> debe ser un número, por ejemplo
+
+	perl creaTablas.pl 2014
 
 ### Uso del programa
 
-El programa se inicia, desde el directorio *Quipu*, con el comando:
+El programa se inicia, desde el directorio donde quedó instalado, con el 
+comando:
 
 	./central.pl &
 
@@ -67,8 +78,7 @@ el comando
 
 	git pull
 	
-en el directorio *Quipu*. Para estar informado de los cambios realizados 
-en el programa, enviar sus datos al correo indicado al final.
+en el directorio correspondiente. 
 
 ##Licencia
 

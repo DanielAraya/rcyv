@@ -1,0 +1,57 @@
+FUNCIONALIDADES
+
+- Registrar detalle (producto, cantidad, valor) de compras diarias
+- Acumular datos en forma semanal y mensual
+- Consultar compras por producto (grupos e individual) y período, total o 
+  por proveedor 
+- Imprimir estadísticas de compras: cantidades, precios unitarios 
+  (promedio, máximo y mínimo), para un período de tiempo
+
+
+MODELO DE DATOS
+
+Productos
+	Codigo
+	Nombre
+	Grupo
+	Unidad
+Grupos
+	Codigo
+	Nombre
+	Descripción
+Unidades de medida
+	Id
+	Nombre
+	Descripción
+Proveedores
+	Id
+	Nombre
+	Domicilio
+Compras
+	Id
+	Fecha
+	Id Proveedor
+	Número Factura
+	Monto total
+Detalle compra
+	Id Compra
+	Id Producto
+	Cantidad
+	Monto total
+	Valor unitario
+
+
+OPCIONES DE MENÚ
+
+Configura
+	Productos
+	Unidades de medida
+	Grupos
+Registra
+	Compras
+	Devoluciones
+	Proveedores
+Consulta
+	Resumen compras
+	Estadísticas
+Termina
