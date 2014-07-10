@@ -1,7 +1,7 @@
-#  DatosP.pm - Registra o modifica Productos
+#  DatosP.pm - Registra o modifica productos
 #  
 # 	Creado : 03/06/2014 
-#	UM : 03/06/2014
+#	UM : 09/07/2014
 
 package DatosP;
 
@@ -9,9 +9,10 @@ use Tk::TList;
 use Tk::LabEntry;
 use Tk::LabFrame;
 use Encode 'decode_utf8';
-	
+#use Data::Dumper ;
+
 # Variables válidas dentro del archivo
-my ($Nombre, $Codigo, $Grupo, $Unidad, $Mnsj,@listaU,@listaG,$GR,$UM);
+my ($Nombre, $Codigo, $Grupo, $Unidad, $Mnsj, @listaU, @listaG, $GR, $UM);
 my ($nombre, $codigo, $grupo, $um);	# Campos
 my ($bReg, $bNvo) ; 	# Botones
 my @datos = () ;		# Lista de Productos
@@ -62,25 +63,20 @@ sub crea {
 		-command => sub { &cancela($esto) } );
 	
 	# Define campos para registro de datos del producto
-	$codigo = $mDatos->LabEntry(-label => "Código:   ", -width => 5,
+	$codigo = $mDatos->LabEntry(-label => "Código: ", -width => 5,
 		-labelPack => [-side => "left", -anchor => "w"], -bg => '#FFFFCC',
 		-textvariable => \$Codigo );
-	$nombre = $mDatos->LabEntry(-label => "Nombre:  ", -width => 35,
+	$nombre = $mDatos->LabEntry(-label => "Nombre: ", -width => 35,
 		-labelPack => [-side => "left", -anchor => "w"], -bg => '#FFFFCC',
 		-textvariable => \$Nombre);
 	$nombre->bind("<FocusIn>", sub { &buscaCod($esto) } );
-#	$grupo = $mDatos->LabEntry(-label => "Grupo:     ", -width => 4,
-#		-labelPack => [-side => "left", -anchor => "w"], -bg => '#FFFFCC',
-#		-textvariable => \$Grupo);
-#	$um = $mDatos->LabEntry(-label => "UM: ", -width => 3,
-#		-labelPack => [-side => "left", -anchor => "w"], -bg => '#FFFFCC',
-#		-textvariable => \$Unidad );
 	my $grT = $mDatos->Label(-text => "Grupo ");
 	$grupo = $mDatos->BrowseEntry( -variable => \$GR, -state => 'readonly',
 		-disabledbackground => '#FFFFFC', -autolimitheight => 1,
 		-disabledforeground => '#000000', -autolistwidth => 1,
 		-browse2cmd => \&eligeG );
 	@listaG = $bd->datosGU('Grupos');
+#	print Dumper @listaG ;
 	foreach $algo ( @listaG ) {
 		$grupo->insert('end', decode_utf8($algo->[1]) ) ;
 	}
@@ -103,9 +99,9 @@ sub crea {
 	$codigo->grid(-row => 0, -column => 0, -columnspan => 6, -sticky => 'nw');	
 	$nombre->grid(-row => 1, -column => 0, -columnspan => 6, -sticky => 'nw');
 	$grT->grid(-row => 2, -column => 0, -columnspan => 6, -sticky => 'nw');
-	$grupo->grid(-row => 2, -column => 0, -columnspan => 6, -sticky => 'nw');
-	$umT->grid(-row => 2, -column => 3, -columnspan => 6, -sticky => 'nw');
-	$um->grid(-row => 2, -column => 3, -columnspan => 6, -sticky => 'nw');
+	$grupo->grid(-row => 2, -column => 1, -columnspan => 6, -sticky => 'nw');
+	$umT->grid(-row => 3, -column => 0, -columnspan => 6, -sticky => 'nw');
+	$um->grid(-row => 3, -column => 1, -columnspan => 6, -sticky => 'nw');
 
 	$bReg->pack(-side => 'left', -expand => 0, -fill => 'none');
 	$bNvo->pack(-side => 'left', -expand => 0, -fill => 'none');
@@ -116,10 +112,23 @@ sub crea {
 	$mDatos->pack(-expand => 1);	
 	$mBotones->pack(-expand => 1);
 	$mMensajes->pack(-expand => 1, -fill => 'both');
-	
+
 	# Inicialmente deshabilita botón Registra
 	$bReg->configure(-state => 'disabled');
-	$codigo->focus;
+	# Comprueba que estén definidos los grupos y las unidades de medida
+	if (not @listaG) { 
+		$ut->mError('Debe registrar grupos de productos');
+		$bNvo->configure(-state => 'disabled');
+	}
+	if (not @listaU) { 
+		$ut->mError('Debe registrar unidades de medida');
+		$bNvo->configure(-state => 'disabled');
+	}
+	if ( @listaG and @listaU ) {
+		$codigo->focus;
+	} else {
+		$bCan->focus ;
+	}
 	
 	bless $esto;
 	return $esto;
@@ -162,7 +171,7 @@ sub muestraLista ($ )
 	my ($algo, $nm);
 	$listaS->delete(0,'end');
 	foreach $algo ( @data ) {
-		$nm = sprintf("%10s %-35s", $algo->[0], decode_utf8($algo->[1])) ;
+		$nm = sprintf("%5s %-40s", $algo->[0], decode_utf8($algo->[1])) ;
 		$listaS->insert('end', -itemtype => 'text', -text => "$nm" ) ;
 	}
 	# Devuelve una lista de listas con datos
@@ -193,6 +202,14 @@ sub modifica ( )
 	$Nombre = decode_utf8($prod->[1]);
 	$Grupo = $prod->[2];
 	$Unidad = $prod->[3];
+	$GR = 'Grupo';
+	foreach $algo ( @listaG ) {
+		if ($algo->[0] eq $Grupo) { $GR = decode_utf8($algo->[1]); }
+	}
+	$UM = 'Unidad';
+	foreach $algo ( @listaU ) {
+		if ($algo->[0] eq $Unidad) { $UM = decode_utf8($algo->[1]); }
+	}
 
 	# Impide modificar codigo
 	$codigo->configure(-state => 'disabled');
@@ -216,7 +233,7 @@ sub registra ( )
 		return;
 	}
 	if ($Unidad eq "") {
-		$Mnsj = "Debe registrar un nombre.";
+		$Mnsj = "Debe registrar una unidad.";
 		$um->focus;
 		return;
 	}
@@ -257,7 +274,7 @@ sub agrega ( )
 		return;
 	}
 	if ($Unidad eq "") {
-		$Mnsj = "Debe registrar un nombre.";
+		$Mnsj = "Debe registrar la unidad de medida.";
 		$um->focus;
 		return;
 	}
@@ -274,7 +291,8 @@ sub limpiaCampos( )
 {
 	$codigo->delete(0,'end');
 	$nombre->delete(0,'end');
-	$grupo->delete(0,'end');
+#	$grupo->delete(0,'end');
+#	$um->delete(0,'end');
 	$Nombre = $Codigo = $Grupo = $Unidad = '';
 }
 
@@ -288,7 +306,6 @@ sub eligeG {
 
 	my ($jc, $Index) = @_;
 	$Grupo = $listaG[$Index]->[0];
-	$Mnsj = $Grupo ;
 }
 
 sub cancela ( )

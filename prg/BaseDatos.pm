@@ -1,7 +1,7 @@
 #  BaseDatos.pm - Manejo de la base de datos en SQLite 3.2 o superior
 #
 #	Creado : 02/06/2014 
-#	UM : 03/06/2014
+#	UM : 04/07/2014
 
 package BaseDatos;
 
@@ -136,6 +136,20 @@ sub buscaP( )
 	return $dato; 
 }
 
+sub dtProducto( $ )
+{
+	my ($esto, $Cdg) = @_;	
+	my $bd = $esto->{'baseDatos'};
+
+	my $sql = $bd->prepare("SELECT Nombre,UM,Grupo FROM producto 
+		WHERE Codigo = ?;");
+	$sql->execute($Cdg);
+	my @dato = $sql->fetchrow_array;
+	$sql->finish();
+	
+	return @dato; 
+}
+
 # Lee, agrega y actualiza tabla Grupos y Umedida
 sub datosGU( $ )
 {
@@ -201,7 +215,7 @@ sub grabaGU( $ $ $ $ $ )
 	$sql->finish();
 } 
 
-# COMPROBANTES: Lee, agrega y actualiza tablas DatosC e ItemsC
+# COMPRAS: Lee, agrega y actualiza tablas DatosC e ItemsC
 sub creaTemp( )
 {
 	my ($esto) = @_;	
@@ -209,16 +223,12 @@ sub creaTemp( )
 
 $bd->do("CREATE TEMPORARY TABLE ItemsT (
 	Numero int(5),
-	CuentaM char(5),
-	Debe int(9),
-	Haber int(9),
-	Detalle char(15),
-	RUT char(10),
-	TipoD char(2),
-	Documento char(10),
-	CCosto char(3),
-	Mes int(2),
-	NombreC char(35) )" );
+	CodigoP char(4),
+	Cantidad int(4),
+	UnidadM char(2),
+	ValorT int(7),
+	ValorU int(5),
+	NombreP char(35) )" );
 }
 
 sub borraTemp( )
@@ -246,6 +256,14 @@ sub datosItems( $ )
 	return @datos; 
 }	
 
+sub borraItemT( $ )
+{
+	my ($esto, $Id) = @_;	
+	my $bd = $esto->{'baseDatos'};
+
+	$bd->do("DELETE FROM ItemsT WHERE ROWID = $Id ;");
+}
+
 sub itemsC( $ )
 {
 	my ($esto, $NmrC) = @_;	
@@ -268,7 +286,7 @@ sub numeroC( )
 	my ($esto) = @_;	
 	my $bd = $esto->{'baseDatos'};
 
-	my $sql = $bd->prepare("SELECT max(Numero) FROM DatosC;");
+	my $sql = $bd->prepare("SELECT max(Numero) FROM Compras;");
 	$sql->execute();
 	my $dato = $sql->fetchrow_array;
 	$sql->finish();
@@ -276,90 +294,47 @@ sub numeroC( )
 	return $dato; 
 }
 
-sub sumas( $ )
+sub agregaCmp( $ $ $ $ $ $ $ $)
 {
-	my ($esto, $Nmr) = @_;	
+	my ($esto,$Numero,$RUT,$Fecha,$TipoF,$Dcmnt,$Total,$Neto,$Iva) = @_;	
 	my $bd = $esto->{'baseDatos'};
-
-	my $sql = $bd->prepare("SELECT sum(Debe),sum(Haber) FROM ItemsT
-		WHERE Numero = ?;");
-	$sql->execute($Nmr);
-	my @dato = $sql->fetchrow_array;
-	$sql->finish();
-
-	return ( $dato[0], $dato[1] ); 
-}
-
-sub totales( $ $ $)
-{
-	my ($esto, $cta, $mes, $op ) = @_;	
-	my $bd = $esto->{'baseDatos'};
-
-	my $sql = $bd->prepare("SELECT sum(Debe),sum(Haber) FROM ItemsC
-		WHERE CuentaM = ? AND Mes $op ?;");
-	$sql->execute($cta,$mes);
-	my @dato = $sql->fetchrow_array;
-	$sql->finish();
-
-	return ( $dato[0], $dato[1] ); 
-}
-
-sub totalesF( $ $ $)
-{
-	my ($esto, $cta, $fi, $ff) = @_;	
-	my $bd = $esto->{'baseDatos'};
-
-	my $sql = $bd->prepare("SELECT sum(i.Debe),sum(i.Haber) FROM ItemsC AS i, DatosC AS d 
-		WHERE i.CuentaM = ? AND i.Numero = d.Numero AND d.Fecha >= ? AND d.Fecha <= ?;");
-	$sql->execute($cta,$fi,$ff);
-	my @dato = $sql->fetchrow_array;
-	$sql->finish();
-
-	return ( $dato[0], $dato[1] ); 
-}
-
-sub agregaCmp( $ $ $ $ $ $ )
-{
-	my ($esto, $Numero, $Fecha, $Glosa, $Total, $Tipo, $bh) = @_;	
-	my $bd = $esto->{'baseDatos'};
-	my (@fila, $mes, $sql);
+	my $sql ;
 
 	# Graba datos basicos del Comprobante
-	$sql = $bd->prepare("INSERT INTO DatosC VALUES(?, ?, ?, ?, ?, ?, ?);");
-	$sql->execute($Numero, $Glosa, $Fecha, $Tipo, $Total, 0, 0);
-
+	$sql = $bd->prepare("INSERT INTO DatosC VALUES(?,?,?,?,?,?,?,?);");
+	$sql->execute($Numero,$RUT,$Fecha,$TipoF,$Dcmnt,$Total,$Neto,$Iva);
+	# Graba items desde el archivo temporal
+	$bd->do("INSERT INTO ItemsC SELECT Numero,CodigoP,Cantidad,UMedida,
+		ValorT,ValorU FROM ItemsT WHERE Numero = $Numero ;") ;
+	# Borra datos temporales
+	$bd->do("DELETE FROM ItemsT");
 
 }
 
-
-# FACTURAS Ventas o Compras; NOTAS emitidas o recibidas
-
-sub buscaFct( $ $ $ $ )
+sub agregaItemT( $ $ $ $ $ $ $ )
 {
-	my ($esto, $tbl, $rut, $doc, $campo) = @_;	
+	my ($esto,$Numero,$Codigo,$Cantidad,$UM,$Monto,$MU,$Cuenta) = @_;	
+	my $bd = $esto->{'baseDatos'};
+	my $sql;
+
+	$sql = $bd->prepare("INSERT INTO ItemsT VALUES(?,?,?,?,?,?,?);");
+	$sql->execute($Numero, $Codigo, $Cantidad, $UM, $Monto, $MU, $Cuenta );
+	$sql->finish();
+
+} 
+
+# FACTURAS Ventas o Compras
+sub buscaDC( $ $ $ $ )
+{
+	my ($esto, $rut, $doc) = @_;	
 	my $bd = $esto->{'baseDatos'};
 
-	my $sql = $bd->prepare("SELECT $campo FROM $tbl WHERE RUT = ? AND Numero = ?;");
+	my $sql = $bd->prepare("SELECT Numero FROM Compras WHERE RUT = ? AND Factura = ?;");
 	$sql->execute($rut, $doc);
 	my $dato = $sql->fetchrow_array;
 	$sql->finish();
 
 	return $dato; 
-}
-
-sub buscaNI ()
-{
-	my ($esto, $tbl, $mes, $ni, $td) = @_;	
-	my $bd = $esto->{'baseDatos'};
-	
-	my $sql = $bd->prepare("SELECT Rut,Numero,Comprobante,TF,FechaE,ROWID 
-		FROM $tbl WHERE Orden = ? AND Tipo = ? AND Mes = ?;");
-	$sql->execute($ni,$td,$mes);
-	my @dato = $sql->fetchrow_array;
-	$sql->finish();
-
-	return @dato; 
-	
 }
 
 sub listaFct( $ $ $ $)
@@ -384,71 +359,6 @@ sub listaFct( $ $ $ $)
 	
 	return @datos; 
 }	
-
-sub buscaDP ( $ $ $ ) 
-{
-	my ($esto,$Rut,$Num,$tbl) =  @_ ;
-	my $bd = $esto->{'baseDatos'};
-#	print "$Rut : $Num $tbl - ";
-	my $sql = $bd->prepare("SELECT DocPago FROM Compras WHERE RUT = ? AND Numero = ?;");
-	$sql->execute($Rut,$Num);
-	
-	my $dato = $sql->fetchrow_array;
-	$sql->finish();
-	
-	if ($dato) {
-		return $dato ;
-	} else {
-		return " ";
-	}
-}
-
-sub datosFacts( $ $ )
-{
-	my ($esto, $Rut, $tbl, $impg) = @_;	
-	my $bd = $esto->{'baseDatos'};
-	my @datos = ();
-	my $imp = ($tbl eq 'BoletasH') ? 'Retenido' : 'IVA';
-	my $tp = ($tbl eq 'BoletasH') ? 'Cuenta' : 'Tipo';
-	my $cns = "SELECT Numero,FechaE,Total,Abonos,FechaV,Comprobante,Nulo,$imp,$tp,Cuenta FROM $tbl WHERE RUT = ?" ;
-	$cns .= " AND Pagada = 0 ORDER BY FechaE " if $impg ;
-	my $sql = $bd->prepare($cns);
-	$sql->execute($Rut);
-	# crea una lista con referencias a las listas de registros
-	while (my @fila = $sql->fetchrow_array) {
-		push @datos, \@fila;
-	}
-	$sql->finish();
-	
-	return @datos; 
-}	
-
-# BOLETAS de CompraVenta
-sub buscaBCV( $ )
-{
-	my ($esto, $fecha) = @_;	
-	my $bd = $esto->{'baseDatos'};
-	
-	my $sql = $bd->prepare("SELECT Fecha FROM BoletasV WHERE Fecha = ?;");
-	$sql->execute($fecha);
-	my $dato = $sql->fetchrow_array;
-	$sql->finish();
-
-	return $dato; 
-}
-
-sub grabaBCV( $ $ $ $ )
-{
-	my ($esto, $fch, $de, $a, $mnt) = @_;	
-	my $bd = $esto->{'baseDatos'};
-
-	my @cmps = split /\//, $fch ;
-
-	my $sql = $bd->prepare("INSERT INTO BoletasV VALUES(?,?,?,?,?,?,?);");
-	$sql->execute($fch, $de, $a, $mnt, 0, '', $cmps[1]);
-	$sql->finish();
-	
-}
 
 # Termina el paquete
 1;

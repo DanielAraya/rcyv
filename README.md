@@ -2,7 +2,7 @@ RCyV
 ====
 
 Un sistema registro de control de compras y ventas, pensado en pequeños 
-negocios tipo cafeterías.
+negocios tipo cafetería.
 
 
 ##Breve descripción
@@ -70,6 +70,14 @@ comando:
 Se puede crear un icono en el escritorio, siguiendo los procedimientos 
 usuales del sistema operativo en que se instala el programa.
 
+Antes de efectuar el registro de datos, es necesario:
+
++ Definir las unidades de medida para la compra de los productos.
++ Crear grupos de productos.
++ Agregar los productos que se quieren controlar.
+
+Todo ello se realiza del menú *Configura*.
+
 
 ### Actualización del programa
 
@@ -107,11 +115,11 @@ Está permitido:
    modificación, con la obligación de cumplir alguna de las 
    siguientes condiciones:
 
-	>  a. Dejar las modificaciones libremente disponibles a otros usuarios, enviándolas al autor del programa original.
+	a. Dejar las modificaciones libremente disponibles a otros usuarios, enviándolas al autor del programa original.
       
-	>  b. Utilizarlas exclusivamente en forma personal o dentro de la organización en la cual se está usando el programa.
+	b. Utilizarlas exclusivamente en forma personal o dentro de la organización en la cual se está usando el programa.
       
-	>  c. Hacer un acuerdo directo con el autor de este programa.
+	c. Hacer un acuerdo directo con el autor de este programa.
 
 3. Cobrar un honorario razonable por instalar, configurar y
    dar soporte en el uso de este programa, dejando constancia

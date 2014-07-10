@@ -5,7 +5,7 @@
 #	Se ejecuta indicado el año como dato de entrada
 #
 #	Creación : 02.06.2014
-#	UM : 03.06.2014 
+#	UM : 08.07.2014 
 
 use DBI;
 use strict;
@@ -71,12 +71,13 @@ $bd->do("CREATE TABLE Compras (
 	Tipo char(1),
 	Factura char(10),
 	Total int(8),
+	Neto int(7),
 	IVA int(7) )" );
 
 # Detalle Compras
 $bd->do("CREATE TABLE ItemsC (
 	Numero int(5),
-	Producto char(4),
+	CodigoP char(4),
 	Cantidad int(4),
 	UnidadM char(2),
 	ValorT int(7),

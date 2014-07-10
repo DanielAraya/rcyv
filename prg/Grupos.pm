@@ -1,7 +1,7 @@
 #  Grupos.pm - Registra o modifica los grupos de productos
 #
 #	Creado: 02/06/2014 
-#	UM: 03/06/2014
+#	UM: 20/06/2014
 
 package Grupos;
 
@@ -158,6 +158,8 @@ sub registra ( )
 	my $bd = $esto->{'baseDatos'};
 	
 	$Mnsj = " ";
+	# Convierte el código a mayúsculas
+	$Codigo = uc $Codigo ;
 	# Comprueba registro del código
 	if ($Codigo eq "") {
 		$Mnsj = "Falta Código.";
@@ -189,6 +191,8 @@ sub agrega ( )
 	my $bd = $esto->{'baseDatos'};
 	
 	$Mnsj = " ";
+	# Convierte el código a mayúsculas
+	$Codigo = uc $Codigo ;
 	# Comprueba registro del código
 	if ($Codigo eq "") {
 		$Mnsj = "Debe registrar Código.";

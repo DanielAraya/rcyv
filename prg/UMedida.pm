@@ -1,7 +1,7 @@
 #  UMedida.pm - Registra o modifica los grupos de productos
 #
 #	Creado: 03/06/2014 
-#	UM: 03/06/2014
+#	UM: 20/06/2014
 
 package UMedida;
 
@@ -32,7 +32,7 @@ sub crea {
 	# Define ventana
 	my $vnt = $vp->Toplevel();
 	$esto->{'ventana'} = $vnt;
-	$vnt->title("Agrega o Modifica Unidades de Medida");
+	$vnt->title("Registra Unidades de Medida");
 	$vnt->geometry("360x320+490+4"); # Tamaño y ubicación
 	
 	# Defime marcos
@@ -62,7 +62,7 @@ sub crea {
 	my $bCan = $mBotones->Button(-text => "Cancela", 
 		-command => sub { &cancela($esto) } );
 	
-	# Define campos para registro de datos del subgrupo
+	# Define campos para registro de datos del grupo
 	$codigo = $mDatos->LabEntry(-label => " Código:   ", -width => 3,
 		-labelPack => [-side => "left", -anchor => "w"], -bg => '#FFFFCC',
 		-disabledbackground => '#FFFFFC', -disabledforeground => '#000000',
@@ -158,6 +158,8 @@ sub registra ( )
 	my $bd = $esto->{'baseDatos'};
 	
 	$Mnsj = " ";
+	# Convierte el código a mayúsculas
+	$Codigo = uc Codigo ;
 	# Comprueba registro del código
 	if ($Codigo eq "") {
 		$Mnsj = "Falta Código.";
@@ -189,6 +191,8 @@ sub agrega ( )
 	my $bd = $esto->{'baseDatos'};
 	
 	$Mnsj = " ";
+	# Convierte el código a mayúsculas
+	$Codigo = uc $Codigo ;
 	# Comprueba registro del código
 	if ($Codigo eq "") {
 		$Mnsj = "Debe registrar Código.";

@@ -1,6 +1,6 @@
 #  Utiles.pm - Paquete de funciones comunes varias
 #  
-#  UM : 15.06.2014 
+#  UM : 09.07.2014 
 
 package Utiles;
 
@@ -29,7 +29,7 @@ sub tipos ( )
 	$tm = "bitstream-vera-sans-mono";
 	$tf = "Courier 9";
 	$fx = "monospace 9";
-	($t1,$t2,$t3) = (11,10,9) ;
+	($t1,$t2,$t3) = (11,10,10) ;
 	if ($^O eq 'MSWin32') {
 		$tb = "Arial";
 		$tm = "Courier";
@@ -51,26 +51,11 @@ sub tipos ( )
 	return %tp;	
 }
 
-sub tipoDcmt ( )
-{
-	my %td = ( FC => "Facturas Recibidas" , FV => "Facturas Emitidas" ,
-		FR => "Facturas Recibidas" , FE => "Facturas Emitidas" ,
-		ND => "Notas de Débito" , NC => "Notas de Crédito" ) ;
-	return %td ;
-}
-
 sub tablaD ( )
 {
 	my %td = ('FC' => "Compras" , 'FV' => "Ventas" , 'FE' => "Compras" , 
 		'FR' => "Ventas" , 'BH' => "BoletasH" , 'LT' => "Docs", 'CH' => "Docs") ;
 	return %td ;
-}
-
-sub grupos ( )
-{
-	my @grps = (  ['1','Activos','A'],['2','Pasivos','P'],
-					['3','Ingresos','I'],['4','Gastos','G'] ) ;
-	return @grps ;
 }
 
 sub mError
@@ -82,7 +67,7 @@ sub mError
 	my $altoP = $vp->screenheight();
 	my $anchoP = $vp->screenwidth();
 	my $xpos = (($anchoP-400)/2);
-	my $ypos = (($altoP-100)/2);
+	my $ypos = (($altoP-60)/2);
 	my $vnt = $vp->Toplevel();
 	$vnt->geometry("400x100+$xpos+$ypos");
 	$vnt->resizable(0,0);
@@ -141,51 +126,6 @@ sub vRut
 	return($res);
 }
 
-sub muestraPC( $ $ $ $ )
-{
-	# Muestra Plan de Cuentas
-	my ($esto, $marco, $bd, $todo, $rut) = @_;
-	
-	my @listaG = $bd->datosSG();		# Lista de grupos
-	my @datosC = $bd->datosCuentas(1);		# Lista de cuentas
-	my @datosE = $bd->datosEmpresa($rut);
-	my ($xgrp, $ngrp, $dcta, $xy, $xt);
-	my $empresa = ' ' ;
-	if (@datosE) {
-		$empresa = decode_utf8($datosE[0]); 
-	}
-	
-	$marco->delete('0.0','end');
-	$marco->insert('end', "PLAN DE CUENTAS - $empresa\n\n", 'negrita' ) ;
-	if (not @listaG) {
-		$marco->insert('end', "Falta definir los subgrupos Plan\n",'grupo');
-		return 0;
-	} elsif (not @datosC) {
-		$marco->insert('end', " Falta definir las Cuentas de Mayor\n",'grupo');
-		return 0;
-	} 
-	if ($todo) {
-		$xt = sprintf("   %-5s %-38s   %2s  %2s  %2s",'', '', 'CI', 'IE','SN' );
-		$marco->insert('end', "$xt\n", 'detalle' ) ;
-	}
-	foreach $xgrp ( @listaG ) {
-		$ngrp = sprintf("%-3s %-30s", $xgrp->[0], decode_utf8($xgrp->[1] ) );
-		$marco->insert('end', "$ngrp\n", 'grupo' ) ;
-		foreach $dcta ( @datosC ) {
-			$xy = sprintf("   %-5s %-38s", $dcta->[0], decode_utf8($dcta->[1]) ) ;
-			$xt = sprintf("   %1s   %1s   %1s",$dcta->[4],$dcta->[3],$dcta->[5] ) ;
-			if ( $xgrp->[0] eq $dcta->[2] ) {
-				if ($todo) {
-					$marco->insert('end', "$xy $xt\n", 'detalle' ) ;
-				} else {
-					$marco->insert('end', "$xy\n", 'cuenta' ) ;
-				}
-			}
-		}
-	}
-	return 1;
-}
-
 sub fechaHoy( )
 {
 	my @cmp = split /-/, today() ;
@@ -240,7 +180,7 @@ sub ayuda
 			if ($_ =~ s/^\.n//) {
 				$mt->insert('end',"$_", 'grupo'); 
 			} else {
-				$mt->insert('end',"$_"); 
+				$mt->insert('end',"$_",'cuenta' ); 
 			}
 		}
 		$i += 1;

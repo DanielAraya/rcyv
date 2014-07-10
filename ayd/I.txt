@@ -1,0 +1,9 @@
+Procedimiento Inicial
+
+Primero, desde el menú "Configura":
+
+1. Definir y registrar las unidades de medida y los grupos de 
+   productos.
+2. Agregar los productos que se compran.
+
+Luego registrar los datos de proveedores, en el menú "Registra".

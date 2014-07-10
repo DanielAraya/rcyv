@@ -4,7 +4,7 @@
 #	Programa de Registro de Compras y Ventas
 #  
 #	Creado : 02/06/2014
-#	UM : 15/06/2014 
+#	UM : 09/07/2014 
 
 use prg::BaseDatos;
 use strict;
@@ -18,7 +18,7 @@ use Date::Simple ('ymd','today');
 
 my @aa = split /-/, today() ; # Fecha del día como arreglo
 
-my $version = "central.pl 0.5 al 03/06/2014";
+my $version = " central.pl v 0.3 al 16/06/2014";
 my $pv = sprintf("Perl %vd", $^V) ;
 
 # Define variables básicas
@@ -35,14 +35,14 @@ my $vp = MainWindow->new();
 # Habilita acceso a rutinas utilitarias
 my $ut = Utiles->crea($vp);
 
-$version .= " con $pv, Tk $Tk::version y ";
+$version .= "\n con $pv, Tk $Tk::version y ";
 $version .= "SQLite $bd->{'baseDatos'}->{sqlite_version} en $^O\n";
 print "\nIniciando Programa Registro de Compras y Ventas\n$version";
 
 # Creación de la interfaz gráfica
 my %tp = $ut->tipos();
 # Define y prepara la tamaño y ubicación de la ventana
-$vp->geometry("480x430+2+2");
+$vp->geometry("480x420+2+2");
 $vp->resizable(1,1);
 $vp->title("Registro de Compras y Ventas");
 
@@ -104,6 +104,11 @@ $lp->pack(-side => "left", -anchor => "e");
 $lg->pack(-side => "left", -anchor => "e");
 $lu->pack(-side => "left", -anchor => "e");
 
+my @dataP = $bd->datosP();
+if (not @dataP) {
+	$ut->ayuda($mt,'I');
+}
+
 # Ejecuta el programa
 MainLoop;
 
@@ -112,7 +117,7 @@ sub opConfigura {
 [['command' => "Productos", -command => sub { require prg::DatosP;
 	DatosP->crea($vp, $bd, $ut, '', $mt); } ],
  ['command' => "Grupos", -command => sub { require prg::Grupos; 
-	Grupos->crea($vp, $bd, $ut, $mt ); } ], "-", 
+	Grupos->crea($vp, $bd, $ut, $mt ); } ], 
  ['command' => "Unidades", -command => sub { require prg::UMedida;
 	UMedida->crea($vp, $bd, $ut, $mt); } ], "-",
  ['command' => "Menú", -command => sub { require prg::Menu;
