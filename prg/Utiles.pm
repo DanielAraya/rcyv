@@ -1,6 +1,7 @@
 #  Utiles.pm - Paquete de funciones comunes varias
 #  
-#  UM : 09.07.2014 
+#	Creado : 02/06/2014 
+#   UM : 12.07.2014 
 
 package Utiles;
 
@@ -28,18 +29,18 @@ sub tipos ( )
 	$tb = "bitstream-vera-sans";
 	$tm = "bitstream-vera-sans-mono";
 	$tf = "Courier 9";
-	$fx = "monospace 9";
+	$fx = "monospace 10";
 	($t1,$t2,$t3) = (11,10,10) ;
 	if ($^O eq 'MSWin32') {
 		$tb = "Arial";
 		$tm = "Courier";
 		$tf = $fx = "Courier 8";
 	}
-	if ($^O eq 'darwin') {
-		$tb = "Arial" ;
-		$tf = $fx = "fixed";
-		($t1,$t2,$t3) = (12,11,10) ;
-	}
+#	if ($^O eq 'darwin') {
+#		$tb = "Arial" ;
+#		$tf = $fx = "fixed";
+#		($t1,$t2,$t3) = (12,11,10) ;
+#	}
 	%tp = ( 
 		ng => "$tb $t1 bold" ,
 		gr => "$tb $t2 bold" ,
@@ -49,6 +50,29 @@ sub tipos ( )
 		fx => "$fx") ;
 
 	return %tp;	
+}
+
+sub ayuda 
+{
+	my ($esto, $mt, $ayd) = @_;
+
+	$mt->delete('0.0','end');
+	open AYD, "ayd/$ayd.txt" or die $!;
+	my $i = 0;
+	while ( <AYD> ) {
+		if ($i == 0) { 
+			$mt->insert('end', "$_", 'negrita' );
+		} else { 
+			if ($_ =~ s/^\.n//) {
+				$mt->insert('end',"$_", 'grupo'); 
+			} elsif ($_ =~ s/^\.s//) {
+				$mt->insert('end',"$_", 'subt');
+			} else  {
+				$mt->insert('end',"$_",'cuenta' ); 
+			}
+		}
+		$i += 1;
+	} 
 }
 
 sub tablaD ( )
@@ -164,27 +188,6 @@ sub diaAnterior ( $ )
 	my $date = d8($ff);
 	my @cmp = split /-/, $date - 1 ;
 	return "$cmp[2]/$cmp[1]/$cmp[0]" ;
-}
-
-sub ayuda 
-{
-	my ($esto, $mt, $ayd) = @_;
-
-	$mt->delete('0.0','end');
-	open AYD, "ayd/$ayd.txt" or die $!;
-	my $i = 0;
-	while ( <AYD> ) {
-		if ($i == 0) { 
-			$mt->insert('end', "$_", 'negrita' );
-		} else { 
-			if ($_ =~ s/^\.n//) {
-				$mt->insert('end',"$_", 'grupo'); 
-			} else {
-				$mt->insert('end',"$_",'cuenta' ); 
-			}
-		}
-		$i += 1;
-	} 
 }
 
 sub meses

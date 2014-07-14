@@ -1,0 +1,44 @@
+REGISTRA PRODUCTOS
+
+.nDescripción
+
+Esta función permite agregar o modificar los productos que
+se utilizan.
+
+El recuadro superior muestra un listado de las productos que ya 
+están registradas; se utiliza para modificar los datos. 
+
+En el recuadro inferior es donde se registran los datos de cada
+producto, completando la siguiente información:
+
+- Código: cuatro dígitos
+- Nombre:
+- Grupo:
+- Unidad de medida:
+
+Previamente se debe agregar los grupos y las unidades de medida, 
+utilizando la opción correspondiente del menú 'Configura'.
+
+.nOperación
+
+.sAgregar
+
+a. Complete los datos en los campos respectivos. Son todos
+    obligatorios.
+b. Cumplido el paso anterior, presione el botón 'Agrega'. El
+    programa verifica que estén ingresados todos los datos; si 
+    todo va bien, aparecerá el Código y Nombre del producto en el 
+    recuadro superior.
+
+.sModificar
+
+a. Con el puntero seleccione en la lista del recuadro superior
+    el producto cuyos datos quiere modificar; haga un doble click
+    y los datos aparecerán el recuadro inferior.
+
+b. Efectúe las modificaciones necesarias y presione el botón
+    'Registra'. El Código no se puede modificar.
+
+.sTerminar
+
+Presione el botón 'Cancela' y se cerrará la ventana.

@@ -1,7 +1,7 @@
 #  Grupos.pm - Registra o modifica los grupos de productos
 #
 #	Creado: 02/06/2014 
-#	UM: 20/06/2014
+#	UM: 12/07/2014
 
 package Grupos;
 
@@ -33,7 +33,7 @@ sub crea {
 	my $vnt = $vp->Toplevel();
 	$esto->{'ventana'} = $vnt;
 	$vnt->title("Agrega o Modifica Grupos de Productos");
-	$vnt->geometry("360x320+490+4"); # Tamaño y ubicación
+	$vnt->geometry("360x360+490+4"); # Tamaño y ubicación
 	
 	# Defime marcos
 	my $mLista = $vnt->LabFrame(-borderwidth => 1, -labelside => 'acrosstop',
@@ -47,6 +47,10 @@ sub crea {
 	my $mnsj = $mMensajes->Label(-textvariable => \$Mnsj, -font => $tp{tx},
 		-bg => '#F2FFE6', -fg => '#800000',);
 	$mnsj->pack(-side => 'right', -expand => 1, -fill => 'x');
+	my $img = $vnt->Photo(-file => "info.gif") ;
+	my $bAyd = $mMensajes->Button(-image => $img, 
+		-command => sub { $ut->ayuda($mt, 'Grupos'); } ); 
+	$bAyd->pack(-side => 'left', -expand => 0, -fill => 'none');
 
 	# Define Lista de datos
 	my $listaS = $mLista->Scrolled('TList', -scrollbars => 'oe',

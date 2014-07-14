@@ -14,7 +14,7 @@ indent_mode=2
 
 [project]
 name=rcyv
-base_path=/home/daniel/Desarrollo/rcyv
+base_path=/home/daniel/Programas/rcyv
 description=
 file_patterns=
 
@@ -23,13 +23,13 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=0
-FILE_NAME_0=138;Perl;0;EISO-8859-1;1;1;0;%2Fhome%2Fdaniel%2FDesarrollo%2Frcyv%2Fcentral.pl;0;4
-FILE_NAME_1=5948;Perl;0;EUTF-8;1;1;0;%2Fhome%2Fdaniel%2FDesarrollo%2Frcyv%2Fprg%2FBaseDatos.pm;0;4
-FILE_NAME_2=1157;Perl;0;EISO-8859-1;1;1;0;%2Fhome%2Fdaniel%2FDesarrollo%2Frcyv%2Fprg%2FCompras.pm;0;4
-FILE_NAME_3=82;Perl;0;EISO-8859-1;1;1;0;%2Fhome%2Fdaniel%2FDesarrollo%2Frcyv%2Fprg%2FDatosP.pm;0;4
-FILE_NAME_4=65;Perl;0;EISO-8859-1;1;1;0;%2Fhome%2Fdaniel%2FDesarrollo%2Frcyv%2Fprg%2FUtiles.pm;0;4
-FILE_NAME_5=3512;Perl;0;EISO-8859-1;1;1;0;%2Fhome%2Fdaniel%2FDesarrollo%2Frcyv%2Fprg%2FGrupos.pm;0;4
+current_page=5
+FILE_NAME_0=4639;Perl;0;EISO-8859-1;1;1;0;%2Fhome%2Fdaniel%2FProgramas%2Frcyv%2Fcentral.pl;0;4
+FILE_NAME_1=0;Perl;0;EUTF-8;1;1;0;%2Fhome%2Fdaniel%2FProgramas%2Frcyv%2FcreaTablas.pl;0;4
+FILE_NAME_2=72;Perl;0;EUTF-8;1;1;0;%2Fhome%2Fdaniel%2FProgramas%2Frcyv%2Fprg%2FBaseDatos.pm;0;4
+FILE_NAME_3=82;Perl;0;EISO-8859-1;1;1;0;%2Fhome%2Fdaniel%2FProgramas%2Frcyv%2Fprg%2FUtiles.pm;0;4
+FILE_NAME_4=2015;Perl;0;EISO-8859-1;1;1;0;%2Fhome%2Fdaniel%2FProgramas%2Frcyv%2Fprg%2FUMedida.pm;0;4
+FILE_NAME_5=11516;Perl;0;EISO-8859-1;1;1;0;%2Fhome%2Fdaniel%2FProgramas%2Frcyv%2Fprg%2FCompras.pm;0;4
 
 [VTE]
-last_dir=/home/daniel/Desarrollo/rcyv
+last_dir=/home/daniel/Programas/rcyv

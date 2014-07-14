@@ -1,7 +1,7 @@
-#  Compras.pm - 
+#  Compras.pm - Registra las compras de productos o servicios
 #
 #	Creado: 15/06/2014 
-#	UM: 26/06/2014
+#	UM: 13/07/2014
 
 package Compras;
 
@@ -19,7 +19,7 @@ my ($Mnsj, $Codigo, $Monto, $RUT, $Dcmnt, $Cuenta, $Cantidad, $UM, $MU) ;
 my ($codigo, $detalle, $fecha, $neto, $iva, $um, $mu, $fe, $fm, $bc, $ot) ;
 my ($total, $monto, $rut, $cantidad, $dcmnt, $numero, $cuenta, $nombre) ;
 # Botones
-my ($bReg, $bEle, $bNvo, $bCnt) ; 
+my ($bReg, $bEle, $bNvo, $bCnt, $bCan) ; 
 # Listas de datos	
 my @datosP = () ;	# Datos de un producto
 my @datos = () ;	# List de items
@@ -48,9 +48,9 @@ sub crea {
 	# Define ventana
 	my $vnt = $vp->Toplevel();
 	$esto->{'ventana'} = $vnt;
-	my $alt = 420 ;
+	my $alt = 450 ;
 	$vnt->title("Registra Compras");
-	$vnt->geometry("440x$alt+485+4");
+	$vnt->geometry("440x$alt+490+4");
 		
 	# Defime marcos
 	my $mDatosC = $vnt->Frame(-borderwidth => 1);
@@ -69,6 +69,10 @@ sub crea {
 	my $mnsj = $mMensajes->Label(-textvariable => \$Mnsj, -font => $tp{tx},
 		-bg => '#F2FFE6', -fg => '#800000',);
 	$mnsj->pack(-side => 'right', -expand => 1, -fill => 'x');
+	my $img = $vnt->Photo(-file => "info.gif") ;
+	my $bAyd = $mMensajes->Button(-image => $img, 
+		-command => sub { $ut->ayuda($mt, 'Compras'); } ); 
+	$bAyd->pack(-side => 'left', -expand => 0, -fill => 'none');
 	
 	# Define Lista de datos
 	my $listaS = $mLista->Scrolled('TList', -scrollbars => 'oe', -width => 60,
@@ -85,7 +89,7 @@ sub crea {
 		-command => sub { &agrega($esto) } ); 
 	$bCnt = $mBotonesC->Button(-text => "Graba", 
 		-command => sub { &graba($esto) } ); 
-	my $bCan = $mBotonesC->Button(-text => "Cancela", 
+	$bCan = $mBotonesC->Button(-text => "Cancela", 
 		-command => sub { &cancela($esto) } );
 
 	# Campos para datos generales del documento
@@ -159,9 +163,7 @@ sub crea {
 			-text => "No hay movimientos registrados" ) ;
 	}
 	
-	# Dibuja interfaz
-	$mMensajes->pack(-expand => 1, -fill => 'both');
-	
+	# Dibuja interfaz	
 	$dcmnt->pack(-side => 'left', -expand => 0, -fill => 'none');
 	$fm->pack(-side => 'left', -expand => 0, -fill => 'none');
 	$fe->pack(-side => 'left', -expand => 0, -fill => 'none');
@@ -200,6 +202,7 @@ sub crea {
 	$mLista->pack(-expand => 1);
 	$mItems->pack(-expand => 1);
 	$mBotonesL->pack(-expand => 1);
+	$mMensajes->pack(-expand => 1, -fill => 'both');
 
 	# Inicialmente deshabilita algunos botones
 	$bReg->configure(-state => 'disabled');
@@ -324,6 +327,7 @@ sub datosF ( $ ) # Verifica los datos mínimos para anotar un item
 		$dcmnt->focus ;
 		return ;
 	}
+	# agregar más comprobaciones
 }
 
 sub muestraLista ( $ ) 
@@ -485,7 +489,7 @@ sub graba ( )
 	}
 	$Mnsj = " ";
 
-	# Graba Comprobante
+	# Graba documento
 	my $fc = $ut->analizaFecha($FechaC); 
 	$bd->agregaCmp($Numero,$RUT,$fc,$TipoF,$Dcmnt,$Total,$Neto,$Iva);
 
@@ -517,7 +521,7 @@ sub limpiaCampos ( )
 	$Monto = 0;
 	$Cuenta = '                    ';
 	
-	# Activa o desactive el botón para contabilizar el comprobante
+	# Activa o desactive el botón para grabar el documento
 	if ($Neto == $TotalI) {
 		$bCnt->configure(-state => 'active');
 	} else {

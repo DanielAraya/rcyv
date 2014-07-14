@@ -1,0 +1,62 @@
+REGISTRA COMPRAS
+
+.nDescripción
+
+Esta opción permita registrar los documentos (facturas, boletas)
+que dan cuenta de las compras realizadas. La pantalla se compone
+de tres áreas: datos básicos del documento, lista de los productos
+y registro del producto. 
+
+El recuadro superior contiene los datos generales del documento.
+Los siguientes datos se deben registrar antes de agregar el detalle 
+de cada producto adquirido.
+
+- Documento #:
+- Tipo de documento: las opciones son Factura Manual, Factura 
+   Electrónica, Boleta de Compraventa y Otro
+- RUT del proveedor: ingresado el RUT aparecerá el nombre del
+  proveedor; sus datos deben estar previamente ingresados
+- Fecha del documento: se utiliza el formato 
+- Nº: corresponde a una numeración interna, definida por el 
+  programa
+- Neto: valor neto total de la compra
+- IVA: monto del IVA correspondiente
+- Total: suma total de la compra
+
+El recuadro intermedio muestra un listado de los producyos que ya 
+están registradas; se utiliza para modificar o eliminar datos. 
+
+En el recuadro inferior es donde se registran los datos de cada
+producto, completando la siguiente información:
+
+- Código: cuatro dígitos; una vez ingresado se muestra el nombre
+  del producto y su unidad de medida
+- Monto: valor neto de la compra específica
+- Cantidad: cifra correspondiente a la unidad de medida indicada
+- Valor Unitario: lo calcula el programa y lo muestra
+
+.nOperación
+
+.sRegistrar
+
+a. Complete los datos los datos básicos del documento (recuadro
+    superior).
+b. Registre cada uno los productos adquiridos (recuadro inferior);
+    completado los datos, presione el botón 'Agrega' y en el
+    recuadro intermedio se muestra nombre del producto y monto. 
+c. Para modificar o eliminar algun producto, seleccione con el
+    puntero en el listado y haga doble click; aparecerá los datos
+    en el recuadro inferior y se habilitan los botones 'Modifica'
+    y 'Elimina'
+d. A medida que se agregan productos el monto se va acumulando 
+    para compararlo con el valor neto total registrado; cuando 
+    la suma es igual a dicho valor neto, se habilita el botón 
+    'Graba' y se puede registrar la compra.
+e. Al grabar el documento se limpian los campos y se puede 
+    ingresar otra compra.
+
+.sTerminar
+
+Grabado el último documento, presione el botón 'Cancela' y se 
+cerrará la ventana.
+

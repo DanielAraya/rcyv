@@ -1,0 +1,40 @@
+REGISTRA UNIDADES DE MEDIDA
+
+.nDescripción
+
+En el registro de las compras es necesario calcular el valor
+unitario de los productos; para ello es conveniente definir
+las unidades de medida aplicadas en la compra.
+
+El recuadro superior muestra un listado de las unidades que ya 
+están registradas y que se utiliza para modificar los datos. 
+
+En el recuadro inferior es donde se registran los datos de cada
+unidad de medida, completando la siguiente información:
+
+- Código: dos caracteres; es obligatorio
+- Nombre: hasta 20 caracteres; igualmente obligatorio
+- Descripción: opcional.
+
+.nOperación
+
+.sAgregar
+
+a. Complete los datos en los campos respectivos.
+b. Cumplido el paso anterior, presione el botón 'Agrega'. El
+    programa verifica que estén ingresados los datos obligatorios; 
+    si todo va bien, aparecerá el Código y Nombre de la unidad 
+    en el recuadro superior.
+
+.sModificar
+
+a. Con el puntero seleccione en la lista del recuadro superior
+    la unidad cuyos datos quiere modificar; haga un doble click
+    y los datos aparecerán el recuadro inferior.
+
+b. Efectúe las modificaciones necesarias y presione el botón
+    'Registra'. El Codigo no se puede modificar.
+
+.sTerminar
+
+Presione el botón 'Cancela' y se cerrará la ventana.

@@ -1,0 +1,40 @@
+REGISTRA GRUPOS DE PRODUCTOS
+
+.nDescripción
+
+Para una mejor organización de las estadísticas, se definen grupos
+de productos. Con esta opción se puede agregar o modificar los 
+datos de los grupos.
+
+El recuadro superior muestra un listado de los grupos que ya 
+están registradas; se utiliza para modificar los datos. 
+
+En el recuadro inferior es donde se registran los datos de cada
+grupo, completando la siguiente información:
+
+- Código: dos caracteres; es obligatorio
+- Nombre: hasta 20 caracteres; igualmente obligatorio
+- Descripción: opcional.
+
+.nOperación
+
+.sAgregar
+
+a. Complete los datos en los campos respectivos.
+b. Cumplido el paso anterior, presione el botón 'Agrega'. El
+    programa verifica que estén ingresados todos los datos; si 
+    todo va bien, aparecerá el Código y Nombre del grupo en el 
+    recuadro superior.
+
+.sModificar
+
+a. Con el puntero seleccione en la lista del recuadro superior
+    el grupo cuyos datos quiere modificar; haga un doble click
+    y los datos aparecerán el recuadro inferior.
+
+b. Efectúe las modificaciones necesarias y presione el botón
+    'Registra'. El Codigo no se puede modificar.
+
+.sTerminar
+
+Presione el botón 'Cancela' y se cerrará la ventana.

@@ -1,10 +1,10 @@
 #!/usr/bin/perl -w
 
 #  central.pl - inicio del programa 
-#	Programa de Registro de Compras y Ventas
+#	Programa de Registro de Compras y Ventas para negocios tipo cafetería
 #  
 #	Creado : 02/06/2014
-#	UM : 09/07/2014 
+#	UM : 13/07/2014 
 
 use prg::BaseDatos;
 use strict;
@@ -42,7 +42,7 @@ print "\nIniciando Programa Registro de Compras y Ventas\n$version";
 # Creación de la interfaz gráfica
 my %tp = $ut->tipos();
 # Define y prepara la tamaño y ubicación de la ventana
-$vp->geometry("480x420+2+2");
+$vp->geometry("480x435+2+2");
 $vp->resizable(1,1);
 $vp->title("Registro de Compras y Ventas");
 
@@ -51,6 +51,7 @@ my $mt = $vp->Scrolled('Text', -scrollbars=> 'e', -bg=> '#F2FFE6',
 	-wrap => 'word');
 $mt->tagConfigure('negrita', -font => $tp{ng}, -foreground => '#008080' ) ;
 $mt->tagConfigure('grupo', -font => $tp{gr}, -foreground => 'brown') ;
+$mt->tagConfigure('subt', -font => $tp{fx}, -foreground => 'blue') ;
 $mt->tagConfigure('cuenta', -font => $tp{cn} ) ;
 $mt->tagConfigure('detalle', -font => $tp{mn} ) ;
 #print $mt->fontFamilies;
@@ -115,7 +116,7 @@ MainLoop;
 # Subrutinas que definen el contenido de los menues
 sub opConfigura {
 [['command' => "Productos", -command => sub { require prg::DatosP;
-	DatosP->crea($vp, $bd, $ut, '', $mt); } ],
+	DatosP->crea($vp, $bd, $ut, $mt); } ],
  ['command' => "Grupos", -command => sub { require prg::Grupos; 
 	Grupos->crea($vp, $bd, $ut, $mt ); } ], 
  ['command' => "Unidades", -command => sub { require prg::UMedida;
@@ -126,7 +127,7 @@ sub opConfigura {
 
 sub opRegistra {
 [['command' => "Compras", -command => sub { require prg::Compras;
-	Compras->crea($vp, $bd, $ut, '', $mt); } ],
+	Compras->crea($vp, $bd, $ut, $mt); } ],
  ['command' => "Devoluciones", -command => sub { require prg::Devuelve; 
 	Devuelve->crea($vp, $bd, $ut, $mt ); } ], 
  ['command' => "Gastos", -command => sub { require prg::Gastos; 

@@ -1,7 +1,7 @@
 #  DatosT.pm - Registra o modifica datos de Proveedores
 #  
 # 	Creado : 02/06/2014 
-#	UM : 02/06/2014
+#	UM : 12/07/2014
 
 package DatosT;
 
@@ -31,9 +31,9 @@ sub crea {
 	# Define ventana
 	my $vnt = $vp->Toplevel();
 	$esto->{'ventana'} = $vnt;
-	my $alt = $^O eq 'MSWin32' ? 400 : 430 ;
+	my $alt = 400 ; # $^O eq 'MSWin32' ? 400 : 430 ;
 	$vnt->title("Agrega o Modifica Datos de Proveedores");
-	$vnt->geometry("360x$alt+475+4"); # Tamaño y ubicación
+	$vnt->geometry("360x$alt+490+4"); # Tamaño y ubicación
 	
 	# Defime marcos
 	my $mLista = $vnt->LabFrame(-borderwidth => 1, -labelside => 'acrosstop',
@@ -43,10 +43,14 @@ sub crea {
 	my $mBotones = $vnt->Frame(-borderwidth => 1);
 	my $mMensajes = $vnt->Frame(-borderwidth => 2, -relief=> 'groove' );
 
-	# Barra de mensajes
+	# Barra de mensajes y botón de ayuda
 	my $mnsj = $mMensajes->Label(-textvariable => \$Mnsj, -font => $tp{tx},
 		-bg => '#F2FFE6', -fg => '#800000',);
 	$mnsj->pack(-side => 'right', -expand => 1, -fill => 'x');
+	my $img = $vnt->Photo(-file => "info.gif") ;
+	my $bAyd = $mMensajes->Button(-image => $img, 
+		-command => sub { $ut->ayuda($mt, 'DatosT'); } ); 
+	$bAyd->pack(-side => 'left', -expand => 0, -fill => 'none');
 	
 	# Define Lista de datos
 	my $listaS = $mLista->Scrolled('TList', -scrollbars => 'oe', -width => 45,

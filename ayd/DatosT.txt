@@ -1,0 +1,37 @@
+REGISTRA PROVEEDORES
+
+.nDescripción
+
+Esta función permite agregar o modificar los datos de los 
+proveedores: empresas o personas naturales.
+
+El recuadro superior muestra un listado de los proveedores que 
+ya están registradas; se utiliza para modificar los datos. 
+
+En el recuadro inferior es donde se registran los datos de cada
+proveedores. El RUT se escribe sin punto entre los número, pero 
+sí se usa el guíon y al final el dígito verificador. Ej.: 4844406-7. 
+El programa verifica si el RUT es correcto y si está registrado..
+
+.nOperación
+
+.sAgregar
+
+a. Complete los datos en los campos respectivos. Son obligados
+    RUT y Nombre. El resto son opcionales.
+b. Cumplido el paso anterior, presione el botón 'Agrega'. El
+    programa realizará algunas validaciones; si todo va bien,
+    aparecerá RUT y Nombre en el recuadro superior.
+
+.sModificar
+
+a. Con el puntero seleccione en la lista del recuadro superior
+    el proveedor cuyos datos quiere modificar; haga un doble click
+    y los datos aparecerán el recuadro inferior.
+
+b. Efectúe las modificaciones necesarias y presione el botón
+   'Registra'. El RUT no se puede modificar.
+
+.sTerminar
+
+Presione el botón 'Cancela' y se cerrará la ventana.

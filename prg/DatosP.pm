@@ -1,7 +1,7 @@
 #  DatosP.pm - Registra o modifica productos
 #  
 # 	Creado : 03/06/2014 
-#	UM : 09/07/2014
+#	UM : 12/07/2014
 
 package DatosP;
 
@@ -33,7 +33,7 @@ sub crea {
 	$esto->{'ventana'} = $vnt;
 #	my $alt = $^O eq 'MSWin32' ? 350 : 400 ;
 	$vnt->title("Agrega o Modifica Datos de Productos");
-	$vnt->geometry("360x350+490+4"); # Tamaño y ubicación
+	$vnt->geometry("360x360+490+4"); # Tamaño y ubicación
 	
 	# Defime marcos
 	my $mLista = $vnt->LabFrame(-borderwidth => 1, -labelside => 'acrosstop',
@@ -43,11 +43,17 @@ sub crea {
 	my $mBotones = $vnt->Frame(-borderwidth => 1);
 	my $mMensajes = $vnt->Frame(-borderwidth => 2, -relief=> 'groove' );
 
-	# Barra de mensajes
+	# Barra de mensajes y botón de ayuda
 	my $mnsj = $mMensajes->Label(-textvariable => \$Mnsj, -font => $tp{tx},
 		-bg => '#F2FFE6', -fg => '#800000',);
 	$mnsj->pack(-side => 'right', -expand => 1, -fill => 'x');
-	
+	my $img = $vnt->Photo(-file => "info.gif") ;
+	my $bAyd = $mMensajes->Button(-image => $img, 
+		-command => sub { $ut->ayuda($mt, 'DatosP'); } ); 
+	$bAyd->pack(-side => 'left', -expand => 0, -fill => 'none');
+
+	$Mnsj = "Para ver Ayuda presione botón 'i'.";
+		
 	# Define Lista de datos
 	my $listaS = $mLista->Scrolled('TList', -scrollbars => 'oe', -width => 50,
 		-selectmode => 'single', -orient => 'horizontal', -font => $tp{mn}, 
