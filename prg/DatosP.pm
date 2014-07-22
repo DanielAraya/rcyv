@@ -1,7 +1,7 @@
 #  DatosP.pm - Registra o modifica productos
 #  
 # 	Creado : 03/06/2014 
-#	UM : 12/07/2014
+#	UM : 21/07/2014
 
 package DatosP;
 
@@ -144,11 +144,14 @@ sub crea {
 sub buscaCod ( $ ) {
 
 	my ($esto) = @_;
+
+	# No es necesario validar código cuando modifica
+	my $noB = $bReg->cget('-state');
+	if ( $noB eq 'active' ) { return ;}
+
 	my $bd = $esto->{'baseDatos'};
 	my $ut = $esto->{'mensajes'};
 	
-	if ( $bReg->cget('-state') eq 'active' ) { return ;}
-
 	$Mnsj = " ";
 	if (not $Codigo) {
 		$Mnsj = "Debe registrar un código.";
@@ -297,9 +300,7 @@ sub limpiaCampos( )
 {
 	$codigo->delete(0,'end');
 	$nombre->delete(0,'end');
-#	$grupo->delete(0,'end');
-#	$um->delete(0,'end');
-	$Nombre = $Codigo = $Grupo = $Unidad = '';
+	$Nombre = $Codigo = $GR = $UM = $Grupo = $Unidad = '';
 }
 
 sub eligeU {

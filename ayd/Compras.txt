@@ -16,7 +16,7 @@ de cada producto adquirido.
    Electrónica, Boleta de Compraventa y Otro
 - RUT del proveedor: ingresado el RUT aparecerá el nombre del
   proveedor; sus datos deben estar previamente ingresados
-- Fecha del documento: se utiliza el formato 
+- Fecha del documento: se utiliza el formato "dd/mm/aaaa"
 - Nº: corresponde a una numeración interna, definida por el 
   programa
 - Neto: valor neto total de la compra

@@ -1,7 +1,7 @@
 #  Compras.pm - Registra las compras de productos o servicios
 #
 #	Creado: 15/06/2014 
-#	UM: 13/07/2014
+#	UM: 21/07/2014
 
 package Compras;
 
@@ -22,7 +22,7 @@ my ($total, $monto, $rut, $cantidad, $dcmnt, $numero, $cuenta, $nombre) ;
 my ($bReg, $bEle, $bNvo, $bCnt, $bCan) ; 
 # Listas de datos	
 my @datosP = () ;	# Datos de un producto
-my @datos = () ;	# List de items
+my @datos = () ;	# List de items comprados
 # Formato de números
 my $pesos = new Number::Format(-thousands_sep => '.', -decimal_point => ',');
 			
@@ -147,15 +147,12 @@ sub crea {
 			
 	# Habilita validación de datos
 	$fecha->bind("<FocusIn>", sub { &buscaDoc($esto) } );
-#	$fechaV->bind("<FocusOut>", sub{ &validaFecha($ut,\$FechaV,\$fechaV,0)});
-#	$glosa->bind("<FocusIn>", sub { &validaFecha($ut,\$Fecha,\$fecha,1) } );
-#	$nmrO->bind("<FocusIn>", sub { &validaFechaC($ut, $bd) } );
-#	$nmrO->bind("<FocusOut>", sub { &validaNI($bd) } );
 	$neto->bind("<FocusOut>", sub { &totaliza() } );
 #	$iva->bind("<FocusIn>", sub { $Iva = int( $Neto * $pIVA / 100 + 0.5) ;} );
 	$iva->bind("<FocusOut>", sub { &totaliza() } );	
 	$codigo->bind("<FocusIn>", sub { &datosF($esto) } );
-	$monto->bind("<FocusIn>", sub { &buscaP($bd,\$Codigo,\$Cuenta,\$codigo,$UM ) } );
+	$monto->bind("<FocusIn>", sub { &buscaP($bd,\$Codigo,\$Cuenta,\$codigo,\$UM ) } );
+	$cantidad->bind("<FocusOut>", sub { &vUnitario() } );
 
 	@datos = muestraLista($esto);
 	if (not @datos) {
@@ -221,6 +218,11 @@ sub totaliza ( )
 	$Total = $Neto + $Iva ;
 }
 
+sub vUnitario ( ) 
+{
+	$MU = sprintf("%.0f", $Monto / $Cantidad) ; # redondea el resultado
+}
+
 sub validaFecha ($ $ $ $ ) 
 {
 	my ($ut, $v, $c, $x) = @_;
@@ -258,8 +260,8 @@ sub buscaP ( $ $ $ $ )
 		$Mnsj = "Ese código NO está registrado";
 		$$c->focus;
 	} else {
-		$$b = substr decode_utf8(" $dCuenta[0]"),0,35;
-		$$d = $dCuenta[1] ;
+		$$b = substr decode_utf8(" $datosP[0]"),0,35;
+		$$d = $datosP[1] ;
 		$Mnsj = " ";
 	}
 }
@@ -302,7 +304,7 @@ sub buscaDoc ( $ )
 		} 
 		$Nombre = decode_utf8(" $nmb");
 	}
-	# Ahora busca Factura
+	# Verifica que la factura NO esté registrada
 	my $fct = $bd->buscaDC($RUT, $Dcmnt);
 	if ($fct) {
 		$Mnsj = "Esa Factura ya está registrada.";
@@ -311,7 +313,7 @@ sub buscaDoc ( $ )
 	}
 }
 
-sub datosF ( $ ) # Verifica los datos mínimos para anotar un item
+sub datosF ( $ ) # Comprueba los datos mínimos para anotar un item
 { 
 	my ($esto) = @_;
 	my $bd = $esto->{'baseDatos'};
@@ -345,11 +347,11 @@ sub muestraLista ( $ )
 	foreach $algo ( @data ) {
 		$cm = $algo->[1];  # Código producto
 		$mnt = $pesos->format_number( $algo->[4] ); 
-		$cntd = $algo->[3] ;
-		$u = $algo->[4] ;
+		$cntd = $algo->[2] ;
+		$u = $algo->[3] ;
 		$np = substr decode_utf8($algo->[6]),0,30 ;
-		$mov = sprintf("%-4s %-30s %8s %3 %10s", 
-			$cm, $np, $cntd, $mnt ) ;
+		$mov = sprintf("%-4s %-30s %8s %3s %10s", 
+			$cm, $np, $cntd, $u, $mnt ) ;
 		$listaS->insert('end', -itemtype => 'text', -text => "$mov" ) ;
 	}
 	# Devuelve una lista de listas con datos de los productos
@@ -518,7 +520,7 @@ sub cancela ( )
 sub limpiaCampos ( )
 {
 	$codigo->delete(0,'end');
-	$Monto = 0;
+	$Monto = $Cantidad = $MU = 0;
 	$Cuenta = '                    ';
 	
 	# Activa o desactive el botón para grabar el documento
@@ -531,7 +533,7 @@ sub limpiaCampos ( )
 
 sub inicializaV ( )
 {
-	$Monto = $TotalI = $Total = $Neto = $Iva = $Cantidad = 0;
+	$Monto = $TotalI = $Total = $Neto = $Iva = $Cantidad = $MU = 0;
 	$Dcmnt = $Codigo = $RUT = $Fecha = $TipoF = '';
 	$Cuenta = $Nombre = '                    ';
 	$UM = '   ';

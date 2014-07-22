@@ -1,7 +1,7 @@
 #  UMedida.pm - Registra o modifica los grupos de productos
 #
 #	Creado: 03/06/2014 
-#	UM: 12/07/2014
+#	UM: 22/07/2014
 
 package UMedida;
 
@@ -82,6 +82,8 @@ sub crea {
 	if (not @datos) {
 		$Mnsj = "No hay unidades registradas." ;
 	}
+	# Convierte código a mayúsculas
+	$codigo->bind("<FocusOut>", sub { $Codigo = uc $Codigo; } );
 		
 	# Dibuja interfaz
 	$codigo->pack(-side => "top", -anchor => "nw");	

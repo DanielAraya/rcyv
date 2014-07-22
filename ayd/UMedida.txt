@@ -12,7 +12,8 @@ están registradas y que se utiliza para modificar los datos.
 En el recuadro inferior es donde se registran los datos de cada
 unidad de medida, completando la siguiente información:
 
-- Código: dos caracteres; es obligatorio
+- Código: obligatorio, dos caracteres; si usa letras el programa 
+   las convierte en mayúsculas 
 - Nombre: hasta 20 caracteres; igualmente obligatorio
 - Descripción: opcional.
 
@@ -33,7 +34,7 @@ a. Con el puntero seleccione en la lista del recuadro superior
     y los datos aparecerán el recuadro inferior.
 
 b. Efectúe las modificaciones necesarias y presione el botón
-    'Registra'. El Codigo no se puede modificar.
+    'Registra'. El Código no se puede modificar.
 
 .sTerminar
 

@@ -1,7 +1,7 @@
 #  Grupos.pm - Registra o modifica los grupos de productos
 #
 #	Creado: 02/06/2014 
-#	UM: 12/07/2014
+#	UM: 22/07/2014
 
 package Grupos;
 
@@ -77,6 +77,9 @@ sub crea {
 	$descripcion = $mDatos->LabEntry(-label => " Descripción: ", -width => 40,
 		-labelPack => [-side => "left", -anchor => "w"], -bg => '#FFFFCC',
 		-textvariable => \$Descripcion);
+
+	# Convierte código a mayúsculas
+	$codigo->bind("<FocusOut>", sub { $Codigo = uc $Codigo; } );
 		
 	@datos = muestraLista($esto);
 	if (not @datos) {

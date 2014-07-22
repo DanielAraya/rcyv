@@ -1,7 +1,7 @@
 #  BaseDatos.pm - Manejo de la base de datos en SQLite 3.2 o superior
 #
 #	Creado : 02/06/2014 
-#	UM : 04/07/2014
+#	UM : 21/07/2014
 
 package BaseDatos;
 
@@ -141,7 +141,7 @@ sub dtProducto( $ )
 	my ($esto, $Cdg) = @_;	
 	my $bd = $esto->{'baseDatos'};
 
-	my $sql = $bd->prepare("SELECT Nombre,UM,Grupo FROM producto 
+	my $sql = $bd->prepare("SELECT Nombre,UM,Grupo FROM Productos 
 		WHERE Codigo = ?;");
 	$sql->execute($Cdg);
 	my @dato = $sql->fetchrow_array;
@@ -298,13 +298,12 @@ sub agregaCmp( $ $ $ $ $ $ $ $)
 {
 	my ($esto,$Numero,$RUT,$Fecha,$TipoF,$Dcmnt,$Total,$Neto,$Iva) = @_;	
 	my $bd = $esto->{'baseDatos'};
-	my $sql ;
 
 	# Graba datos basicos del Comprobante
-	$sql = $bd->prepare("INSERT INTO DatosC VALUES(?,?,?,?,?,?,?,?);");
+	my $sql = $bd->prepare("INSERT INTO Compras VALUES(?,?,?,?,?,?,?,?);");
 	$sql->execute($Numero,$RUT,$Fecha,$TipoF,$Dcmnt,$Total,$Neto,$Iva);
 	# Graba items desde el archivo temporal
-	$bd->do("INSERT INTO ItemsC SELECT Numero,CodigoP,Cantidad,UMedida,
+	$bd->do("INSERT INTO ItemsC SELECT Numero,CodigoP,Cantidad,UnidadM,
 		ValorT,ValorU FROM ItemsT WHERE Numero = $Numero ;") ;
 	# Borra datos temporales
 	$bd->do("DELETE FROM ItemsT");
@@ -329,7 +328,7 @@ sub buscaDC( $ $ $ $ )
 	my ($esto, $rut, $doc) = @_;	
 	my $bd = $esto->{'baseDatos'};
 
-	my $sql = $bd->prepare("SELECT Numero FROM Compras WHERE RUT = ? AND Factura = ?;");
+	my $sql = $bd->prepare("SELECT Numero FROM Compras WHERE RutP = ? AND Factura = ?;");
 	$sql->execute($rut, $doc);
 	my $dato = $sql->fetchrow_array;
 	$sql->finish();

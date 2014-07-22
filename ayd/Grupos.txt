@@ -12,7 +12,8 @@ están registradas; se utiliza para modificar los datos.
 En el recuadro inferior es donde se registran los datos de cada
 grupo, completando la siguiente información:
 
-- Código: dos caracteres; es obligatorio
+- Código: obligatorio, dos caracteres; si usa letras el programa 
+   las convierte en mayúsculas 
 - Nombre: hasta 20 caracteres; igualmente obligatorio
 - Descripción: opcional.
 
