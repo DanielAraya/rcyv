@@ -4,7 +4,7 @@
 #	Programa de Registro de Compras y Ventas para negocios tipo cafetería
 #  
 #	Creado : 02/06/2014
-#	UM : 13/07/2014 
+#	UM : 23/07/2014 
 
 use prg::BaseDatos;
 use strict;
@@ -128,16 +128,24 @@ sub opConfigura {
 sub opRegistra {
 [['command' => "Compras", -command => sub { require prg::Compras;
 	Compras->crea($vp, $bd, $ut, $mt); } ],
- ['command' => "Devoluciones", -command => sub { require prg::Devuelve; 
-	Devuelve->crea($vp, $bd, $ut, $mt ); } ], 
- ['command' => "Gastos", -command => sub { require prg::Gastos; 
-	Gastos->crea($vp, $bd, $ut, $mt ); } ], 	"-", 
+ ['command' => "Otras facturas", -command => sub { require prg::Gastos; 
+	Gastos->crea($vp, $bd, $ut, $mt ); } ], 
+ ['cascade' => "Devoluciones", -tearoff => 0, -menuitems => opDevuelve()], 
+ "-", 
  ['command' => "Comandas", -command => sub { require prg::Comandas; 
 	Comandas->crea($vp, $bd, $ut, $mt ); } ],
  ['command' => "Ventas", -command => sub { require prg::Ventas; 
-	Ventas->crea($vp, $bd, $ut, $mt ); } ], "-",
+	Ventas->crea($vp, $bd, $ut, $mt ); } ], 
+ "-",
  ['command' => "Proveedores", -command => sub { require prg::DatosT;
 	DatosT->crea($vp, $bd, $ut, $mt); } ] ]
+}
+
+sub opDevuelve {
+[['command' => "Emite ND", -command => sub { require prg::ECompras;
+	ECompras->crea($vp, $mt, $ut, $bd);} ], 
+ ['command' => "Registra NC", -command => sub { require prg::EVentas;
+ 	EVentas->crea($vp, $mt, $ut, $bd);} ]]
 }
 
 sub opConsulta {

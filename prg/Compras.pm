@@ -1,7 +1,7 @@
 #  Compras.pm - Registra las compras de productos o servicios
 #
 #	Creado: 15/06/2014 
-#	UM: 21/07/2014
+#	UM: 27/07/2014
 
 package Compras;
 
@@ -13,19 +13,23 @@ use Number::Format;
 
 # Variables válidas dentro del archivo
 # Datos a registrar
-my ($Numero, $Id, $Fecha, $Neto, $Iva, $Total, $Nombre, $TipoF, $NmrI) ;
-my ($Mnsj, $Codigo, $Monto, $RUT, $Dcmnt, $Cuenta, $Cantidad, $UM, $MU) ;
+my ($Numero,$Id,$Fecha,$Neto,$Iva,$Total,$Nombre,$TipoF,$NmrI,$Descuento) ;
+my ($Mnsj,$Codigo,$Monto,$RUT,$Dcmnt,$Prod,$Cantidad,$UM,$MU,$MNT);
+my ($Dsct, $MntP, $pIva) ;
 # Campos
-my ($codigo, $detalle, $fecha, $neto, $iva, $um, $mu, $fe, $fm, $bc, $ot) ;
-my ($total, $monto, $rut, $cantidad, $dcmnt, $numero, $cuenta, $nombre) ;
+my ($codigo,$detalle,$fecha,$neto,$iva,$um,$mu,$fe,$fm,$gd,$bc,$ot,$mnt);
+my ($descuento,$dsct,$mntP) ;
+my ($total,$monto,$rut,$cantidad,$dcmnt,$numero,$cuenta,$nombre) ;
 # Botones
-my ($bReg, $bEle, $bNvo, $bCnt, $bCan) ; 
+my ($bReg, $bEle, $bNvo, $bGrb, $bCan) ; 
 # Listas de datos	
 my @datosP = () ;	# Datos de un producto
 my @datos = () ;	# List de items comprados
 # Formato de números
 my $pesos = new Number::Format(-thousands_sep => '.', -decimal_point => ',');
-			
+
+$pIva = 0.19 ;
+	
 sub crea {
 
 	my ($esto, $vp, $bd, $ut, $mt ) = @_;
@@ -48,7 +52,7 @@ sub crea {
 	# Define ventana
 	my $vnt = $vp->Toplevel();
 	$esto->{'ventana'} = $vnt;
-	my $alt = 450 ;
+	my $alt = 495 ;
 	$vnt->title("Registra Compras");
 	$vnt->geometry("440x$alt+490+4");
 		
@@ -57,6 +61,7 @@ sub crea {
 	my $mDatosL2 = $vnt->Frame(-borderwidth => 1);
 	my $mDatosN = $vnt->Frame(-borderwidth => 1);
 	my $mDatosL3 = $vnt->Frame(-borderwidth => 1);
+	my $mDatosL4 = $vnt->Frame(-borderwidth => 1);
 	my $mLista = $vnt->LabFrame(-borderwidth => 1, -labelside => 'acrosstop',
 		-label => "Productos comprados");
 	my $mItems = $vnt->LabFrame(-borderwidth => 1, -labelside => 'acrosstop',
@@ -73,6 +78,7 @@ sub crea {
 	my $bAyd = $mMensajes->Button(-image => $img, 
 		-command => sub { $ut->ayuda($mt, 'Compras'); } ); 
 	$bAyd->pack(-side => 'left', -expand => 0, -fill => 'none');
+	$Mnsj = "Para ver Ayuda presione botón 'i'.";
 	
 	# Define Lista de datos
 	my $listaS = $mLista->Scrolled('TList', -scrollbars => 'oe', -width => 60,
@@ -87,7 +93,7 @@ sub crea {
 		-command => sub { &elimina($esto) } ); 
 	$bNvo = $mBotonesL->Button(-text => "Agrega", 
 		-command => sub { &agrega($esto) } ); 
-	$bCnt = $mBotonesC->Button(-text => "Graba", 
+	$bGrb = $mBotonesC->Button(-text => "Graba", 
 		-command => sub { &graba($esto) } ); 
 	$bCan = $mBotonesC->Button(-text => "Cancela", 
 		-command => sub { &cancela($esto) } );
@@ -99,6 +105,8 @@ sub crea {
 	$fm = $mDatosC->Radiobutton( -text => "F.M.", -value => 'M', 
 		-variable => \$TipoF );
 	$fe = $mDatosC->Radiobutton( -text => "F.E.", -value => 'E', 
+		-variable => \$TipoF );
+	$gd = $mDatosC->Radiobutton( -text => "G.D.", -value => 'D', 
 		-variable => \$TipoF );
 	$bc = $mDatosC->Radiobutton( -text => "B", -value => 'B', 
 		-variable => \$TipoF );
@@ -116,7 +124,7 @@ sub crea {
 		-justify => 'right', -textvariable => \$Numero, -state => 'disabled',
 		-disabledbackground => '#FFFFFC', -disabledforeground => '#000000');
 
-	$nombre = $mDatosN->Label(	-textvariable => \$Nombre, -font => $tp{tx});
+	$nombre = $mDatosN->Label(-textvariable => \$Nombre, -font => $tp{tx});
 
 	$neto = $mDatosL3->LabEntry(-label => "Neto: ", -width => 12,
 		-labelPack => [-side => "left", -anchor => "w"], -bg => '#FFFFCC',
@@ -128,30 +136,42 @@ sub crea {
 		-labelPack => [-side => "left", -anchor => "w"], -bg => '#FFFFCC',
 		-justify => 'right', -textvariable => \$Total );
 
+	$dsct = $mDatosL4->Checkbutton( -text => 'Hay descuentos', 
+		-variable => \$Dsct, -command => sub { &hDsct () } );
+	$mntP = $mDatosL4->Checkbutton( -text => 'Factura con total en productos', 
+		-variable => \$MntP);
+
 	# Campos para registro de productos
 	$codigo = $mItems->LabEntry(-label => "Código: ", -width => 5,
 		-labelPack => [-side => "left", -anchor => "w"], -bg => '#FFFFCC',
 		-textvariable => \$Codigo );
-	$cuenta = $mItems->Label(-textvariable => \$Cuenta, -font => $tp{tx});
+	$cuenta = $mItems->Label(-textvariable => \$Prod, -font => $tp{fx});
 	$monto = $mItems->LabEntry(-label => "Monto: ", -width => 10,
 		-labelPack => [-side => "left", -anchor => "w"], -bg => '#FFFFCC',
 		-textvariable => \$Monto); 
+	$descuento = $mItems->LabEntry(-label => " Descuento: ", -width => 6,
+		-labelPack => [-side => "left", -anchor => "w"], -bg => '#FFFFCC',
+		-textvariable => \$Descuento);
 	$cantidad= $mItems->LabEntry(-label => " Cantidad: ", -width => 6,
 		-labelPack => [-side => "left", -anchor => "w"], -bg => '#FFFFCC',
-		-textvariable => \$Cantidad); 
-	$um = $mItems->Label(-textvariable => \$UM, -font => $tp{tx});
-	$mu = $mItems->LabEntry(-label => " V. Unitario ", -width => 8,
+		-textvariable => \$Cantidad);
+	$um = $mItems->Label(-textvariable => \$UM, -font => $tp{fx});
+	$mu = $mItems->LabEntry(-label => " Unitario ", -width => 8,
 		-labelPack => [-side => "left", -anchor => "w"],
 		-textvariable => \$MU, -state => 'disabled',
+		-disabledbackground => '#FFFFFC', -disabledforeground => '#000000'); 
+	$mnt = $mItems->LabEntry(-label => "Costo Total ", -width => 8,
+		-labelPack => [-side => "left", -anchor => "w"],
+		-textvariable => \$MNT, -state => 'disabled',
 		-disabledbackground => '#FFFFFC', -disabledforeground => '#000000'); 
 			
 	# Habilita validación de datos
 	$fecha->bind("<FocusIn>", sub { &buscaDoc($esto) } );
+	$rut->bind("<FocusIn>", sub { &deshabilita() } );
 	$neto->bind("<FocusOut>", sub { &totaliza() } );
-#	$iva->bind("<FocusIn>", sub { $Iva = int( $Neto * $pIVA / 100 + 0.5) ;} );
-	$iva->bind("<FocusOut>", sub { &totaliza() } );	
+	$iva->bind("<FocusOut>", sub { $Total = $Neto + $Iva ; } );	
 	$codigo->bind("<FocusIn>", sub { &datosF($esto) } );
-	$monto->bind("<FocusIn>", sub { &buscaP($bd,\$Codigo,\$Cuenta,\$codigo,\$UM ) } );
+	$monto->bind("<FocusIn>", sub { &buscaP($bd,\$Codigo,\$Prod,\$codigo,\$UM ) } );
 	$cantidad->bind("<FocusOut>", sub { &vUnitario() } );
 
 	@datos = muestraLista($esto);
@@ -164,6 +184,7 @@ sub crea {
 	$dcmnt->pack(-side => 'left', -expand => 0, -fill => 'none');
 	$fm->pack(-side => 'left', -expand => 0, -fill => 'none');
 	$fe->pack(-side => 'left', -expand => 0, -fill => 'none');
+	$gd->pack(-side => 'left', -expand => 0, -fill => 'none');
 	$bc->pack(-side => 'left', -expand => 0, -fill => 'none');
 	$ot->pack(-side => 'left', -expand => 0, -fill => 'none');
 
@@ -176,18 +197,23 @@ sub crea {
 	$neto->pack(-side => 'left', -expand => 0, -fill => 'none');
 	$iva->pack(-side => 'left', -expand => 0, -fill => 'none');
 	$total->pack(-side => 'left', -expand => 0, -fill => 'none'); 
+
+	$dsct->pack(-side => 'left', -expand => 0, -fill => 'none');
+	$mntP->pack(-side => 'left', -expand => 0, -fill => 'none');
 	
 	$codigo->grid(-row => 0, -column => 0, -sticky => 'nw');	
 	$cuenta->grid(-row => 0, -column => 1, -columnspan => 3, -sticky => 'nw');
 	$monto->grid(-row => 1, -column => 0, -sticky => 'nw');	
-	$cantidad->grid(-row => 1, -column => 1, -sticky => 'nw');
-	$um->grid(-row => 1, -column => 2, -sticky => 'nw');
-	$mu->grid(-row => 1, -column => 3, -sticky => 'nw');
+	$descuento->grid(-row => 1, -column => 1, -sticky => 'nw');
+	$cantidad->grid(-row => 1, -column => 2, -sticky => 'nw');
+	$um->grid(-row => 1, -column => 3, -sticky => 'nw');
+	$mnt->grid(-row => 2, -column => 0, -sticky => 'nw');
+	$mu->grid(-row => 2, -column => 1, -sticky => 'nw');
 	
 	$bReg->pack(-side => 'left', -expand => 0, -fill => 'none');
 	$bEle->pack(-side => 'left', -expand => 0, -fill => 'none');
 	$bNvo->pack(-side => 'left', -expand => 0, -fill => 'none');
-	$bCnt->pack(-side => 'left', -expand => 0, -fill => 'none');
+	$bGrb->pack(-side => 'left', -expand => 0, -fill => 'none');
 	$bCan->pack(-side => 'right', -expand => 0, -fill => 'none');
 
 	$listaS->pack();
@@ -195,6 +221,7 @@ sub crea {
 	$mDatosL2->pack(-expand => 1);
 	$mDatosN->pack(-expand => 1);
 	$mDatosL3->pack(-expand => 1);
+	$mDatosL4->pack(-expand => 1);
 	$mBotonesC->pack(-expand => 1);
 	$mLista->pack(-expand => 1);
 	$mItems->pack(-expand => 1);
@@ -204,7 +231,8 @@ sub crea {
 	# Inicialmente deshabilita algunos botones
 	$bReg->configure(-state => 'disabled');
 	$bEle->configure(-state => 'disabled');
-	$bCnt->configure(-state => 'disabled');
+	$bGrb->configure(-state => 'disabled');
+	$descuento->configure(-state => 'disabled');
 	
 	$dcmnt->focus;
 
@@ -215,14 +243,39 @@ sub crea {
 # Funciones internas
 sub totaliza ( ) 
 {
+	$Iva = sprintf("%.0f", $Neto * $pIva );
 	$Total = $Neto + $Iva ;
 }
 
 sub vUnitario ( ) 
 {
-	$MU = sprintf("%.0f", $Monto / $Cantidad) ; # redondea el resultado
+	$MNT = $Monto - $Descuento ;
+	if ( $MntP ) { 
+		$MNT = sprintf("%.0f", $MNT / (1 + $pIva) ); 
+	}
+	# redondea el resultado
+	$MU = sprintf("%.0f", $MNT / $Cantidad) ; 
 }
 
+sub deshabilita ( )
+{
+	if ($TipoF eq 'B' or $TipoF eq 'O') {
+		$neto->configure(-state => 'disabled') ;
+		$iva->configure(-state => 'disabled') ;
+	} else {
+		$neto->configure(-state => 'normal') ;
+		$iva->configure(-state => 'normal') ;		
+	}
+}
+
+sub hDsct ()
+{
+	if ( $Dsct ) {
+		$descuento->configure(-state => 'normal');
+	} else {
+		$descuento->configure(-state => 'disabled');
+	}
+}
 sub validaFecha ($ $ $ $ ) 
 {
 	my ($ut, $v, $c, $x) = @_;
@@ -235,7 +288,7 @@ sub validaFecha ($ $ $ $ )
 		return ;
 	} 
 	if ( not $$v =~ m|\d+/\d+/\d+| ) {
-		$Mnsj = "Problema con formato. Debe ser dd/mm/aaa";
+		$Mnsj = "Problema con formato. Debe ser dd/mm/aaaa";
 		$$c->focus;
 	} elsif ( not $ut->analizaFecha($$v) ) {
 		print chr 7 ;
@@ -342,16 +395,16 @@ sub muestraLista ( $ )
 	my @data = $bd->datosItems($Numero);
 
 	# Completa TList con código, nombre producto, monto y cantidad 
-	my ($algo, $mov, $cm, $mnt, $cntd, $np, $u);
+	my ($algo, $mov, $cp, $mnt, $cntd, $np, $u);
 	$listaS->delete(0,'end');
 	foreach $algo ( @data ) {
-		$cm = $algo->[1];  # Código producto
+		$cp = $algo->[1];  # Código producto
 		$mnt = $pesos->format_number( $algo->[4] ); 
 		$cntd = $algo->[2] ;
 		$u = $algo->[3] ;
 		$np = substr decode_utf8($algo->[6]),0,30 ;
 		$mov = sprintf("%-4s %-30s %8s %3s %10s", 
-			$cm, $np, $cntd, $u, $mnt ) ;
+			$cp, $np, $cntd, $u, $mnt ) ;
 		$listaS->insert('end', -itemtype => 'text', -text => "$mov" ) ;
 	}
 	# Devuelve una lista de listas con datos de los productos
@@ -384,15 +437,15 @@ sub agrega ( )
 		return;
 	}
 	# Graba datos
-	$bd->agregaItemT($Numero,$Codigo,$Cantidad,$UM,$Monto,$MU,$Cuenta);
+	$bd->agregaItemT($Numero,$Codigo,$Cantidad,$UM,$MNT,$MU,$Prod,$Descuento,$Monto);
 
 	# Muestra lista modificada de productos
 	@datos = muestraLista($esto);
 
 	# Totaliza itemes
-	$TotalI += $Monto ;
-	if ($TotalI == $Neto) {	
-		$bCnt->configure(-state => 'disabled');
+	$TotalI += $Monto - $Descuento ;
+	if ($Total == $TotalI + $Iva) {	
+		$bGrb->configure(-state => 'disabled');
 	}
 	limpiaCampos();
 	$codigo->focus;
@@ -416,17 +469,20 @@ sub modifica ( )
 	
 	# Obtiene item seleccionado
 	my @ns = $listaS->info('selection');
-	my $sItem = @datos[$ns[0]];
+	my $Item = @datos[$ns[0]];
 	
 	# Rellena campos
-	$Codigo = $sItem->[1];
-	$Monto = $sItem->[2] ? $sItem->[2] : $sItem->[3] ;
-	$Detalle = decode_utf8($sItem->[4]);
-	$Cuenta = $sItem->[10];	
-	$CCto = $sItem->[8];
-
+	$Codigo = $Item->[1];
+	$Cantidad = $Item->[2];
+	$Monto = $Item->[8] ;
+	$Descuento = $Item->[7];
+	$Prod = $Item->[6];	
+	$MNT = $Item->[4];
+	$MU = $Item->[5];
 	# Obtiene Id del registro
-	$Id = $sItem->[11];
+	$Id = $Item->[9];
+	# Modifica total
+	$TotalI -= ($Monto - $Descuento) ;
 }
 
 sub registra ( )
@@ -434,21 +490,22 @@ sub registra ( )
 	my ($esto) = @_;
 	my $bd = $esto->{'baseDatos'} ;
 	# Graba datos
-	$bd->grabaItemT($Codigo, $Detalle, $Monto, $DH, '', $TipoD, $Dcmnt, 
-	 $Cuenta, $Id);
+	$bd->grabaItemT($Codigo,$Cantidad,$UM,$MNT,$MU,$Prod,$Descuento,$Monto,$Id);
 
 	# Muestra lista actualizada de items
 	@datos = muestraLista($esto);
 	
-	# Retotaliza comprobante
-	my ($td, $th) = $bd->sumas($Numero);
-	$TotalI = ($DH eq "D") ? $td : $th ;
-	if ($TotalI == $Neto) {	
-		$bCnt->configure(-state => 'active');
+	# Totaliza
+	$TotalI += $Monto - $Descuento ;
+	if ($TotalI == $Total) {	
+		$bGrb->configure(-state => 'active');
+		$bNvo->configure(-state => 'disabled');
+		$bGrb->focus ;
+	} else {
+		$bNvo->configure(-state => 'active');		
 	}
 	limpiaCampos();
 	
-	$bNvo->configure(-state => 'active');
 	$bEle->configure(-state => 'disabled');
 	$bReg->configure(-state => 'disabled');
 }
@@ -463,7 +520,7 @@ sub elimina ( )
 	# Muestra lista actualizada de items
 	@datos = muestraLista($esto);
 
-	$TotalI -= $Monto;
+	$TotalI -= $Monto - $Descuento;
 	limpiaCampos();
 
 	$bNvo->configure(-state => 'active');
@@ -493,10 +550,14 @@ sub graba ( )
 
 	# Graba documento
 	my $fc = $ut->analizaFecha($FechaC); 
-	$bd->agregaCmp($Numero,$RUT,$fc,$TipoF,$Dcmnt,$Total,$Neto,$Iva);
+	my $rLC = ($TipoF eq 'M' or $TipoF eq 'E') ? 1 : 0 ;
+	$bd->agregaCmp($Numero,$RUT,$fc,$TipoF,$Dcmnt,$Total,$Neto,$Iva,$rLC);
 
 	limpiaCampos();
-	$bCnt->configure(-state => 'disabled');
+	$bGrb->configure(-state => 'disabled');
+	$neto->configure(-state => 'normal');
+	$iva->configure(-state => 'normal');
+
 	$listaS->delete(0,'end');
 	$listaS->insert('end', -itemtype => 'text', 
 			-text => "No hay movimientos registrados" ) ;
@@ -520,22 +581,23 @@ sub cancela ( )
 sub limpiaCampos ( )
 {
 	$codigo->delete(0,'end');
-	$Monto = $Cantidad = $MU = 0;
-	$Cuenta = '                    ';
+	$Monto = $Cantidad = $MU = $MNT = $Descuento = 0;
+	$Prod = '                    ';
 	
-	# Activa o desactive el botón para grabar el documento
-	if ($Neto == $TotalI) {
-		$bCnt->configure(-state => 'active');
+	# Activa o desactiva el botón para grabar el documento
+	if ($Total == $TotalI + $Iva) {
+		$bGrb->configure(-state => 'active');
 	} else {
-		$bCnt->configure(-state => 'disabled');
+		$bGrb->configure(-state => 'disabled');
 	}
 }
 
 sub inicializaV ( )
 {
-	$Monto = $TotalI = $Total = $Neto = $Iva = $Cantidad = $MU = 0;
+	$Monto = $TotalI = $Total = $Neto = $Iva = $Cantidad = $MU = $MNT = 0;
+	$Descuento = $Dsct = $MntP = 0;
 	$Dcmnt = $Codigo = $RUT = $Fecha = $TipoF = '';
-	$Cuenta = $Nombre = '                    ';
+	$Prod = $Nombre = '                    ';
 	$UM = '   ';
 
 }

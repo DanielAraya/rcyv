@@ -13,7 +13,7 @@ de cada producto adquirido.
 
 - Documento #:
 - Tipo de documento: las opciones son Factura Manual, Factura 
-   Electrónica, Boleta de Compraventa y Otro
+   Electrónica, Guía Despacho, Boleta de Compraventa y Otro
 - RUT del proveedor: ingresado el RUT aparecerá el nombre del
   proveedor; sus datos deben estar previamente ingresados
 - Fecha del documento: se utiliza el formato "dd/mm/aaaa"
@@ -23,6 +23,9 @@ de cada producto adquirido.
 - IVA: monto del IVA correspondiente
 - Total: suma total de la compra
 
+En el caso de Boletas y Otros, solamente queda activo el campo 
+'Total'.
+
 El recuadro intermedio muestra un listado de los producyos que ya 
 están registradas; se utiliza para modificar o eliminar datos. 
 
@@ -31,9 +34,10 @@ producto, completando la siguiente información:
 
 - Código: cuatro dígitos; una vez ingresado se muestra el nombre
   del producto y su unidad de medida
-- Monto: valor neto de la compra específica
+- Monto: valor neto de la compra específica; si es Boleta u Otro
+  toma el valor total
 - Cantidad: cifra correspondiente a la unidad de medida indicada
-- Valor Unitario: lo calcula el programa y lo muestra
+- Costo Total y Unitario: los calcula el programa y los muestra.
 
 .nOperación
 

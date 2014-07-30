@@ -55,3 +55,28 @@ Consulta
 	Resumen compras
 	Estadísticas
 Termina
+
+---
+* Registro compras:
+
+- En caso de Boleta, registra el Total (nada mas); el monto de
+  cada producto es el total y se toma como costo para el valor unitario.
+- En caso de Otro, se crea un RUT ficticio y se trata como boleta.
+- OJO: ver el caso de descuentos por productos
+
+* Devoluciones:
+
+- Se emite una Nota de Devolución, a partir de la factura y posteriormente
+  se registra la Nota de Crédito a partir de la ND
+- Ver el registro de NC sin devolución
+
+* Guias de Despacho
+
+- Ingresar las guias parciales (idem Factura) para registra la Factura de 
+  resumen a fin de mes.
+
+* Otras facturas
+
+- Registrar facturas de gastos y activos, para fines del IVA; sin detalle,
+  pero con una glosa
+

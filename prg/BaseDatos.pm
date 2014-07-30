@@ -1,7 +1,7 @@
 #  BaseDatos.pm - Manejo de la base de datos en SQLite 3.2 o superior
 #
 #	Creado : 02/06/2014 
-#	UM : 21/07/2014
+#	UM : 29/07/2014
 
 package BaseDatos;
 
@@ -228,7 +228,9 @@ $bd->do("CREATE TEMPORARY TABLE ItemsT (
 	UnidadM char(2),
 	ValorT int(7),
 	ValorU int(5),
-	NombreP char(35) )" );
+	NombreP char(35),
+	Dsct int(7),
+	Monto int(7) )" );
 }
 
 sub borraTemp( )
@@ -264,6 +266,18 @@ sub borraItemT( $ )
 	$bd->do("DELETE FROM ItemsT WHERE ROWID = $Id ;");
 }
 
+sub grabaItemT($ $ $ $ $ $ $ $ $)
+{
+	my ($esto,$Cdg,$Cntd,$UM,$MNT,$MU,$Prd,$Dsct,$Monto,$Id) = @_;	
+	my $bd = $esto->{'baseDatos'};
+
+	my $sql = $bd->prepare("UPDATE ItemsT SET CodigoP = ?, Cantidad = ?, 
+		UnidadM = ?, ValorT = ?, ValorU = ?, NombreP = ?, Dsct = ?, 
+		Monto = ? WHERE ROWID = ?;");
+	$sql->execute($Cdg,$Cntd,$UM,$MNT,$MU,$Prd,$Dsct,$Monto,$Id);
+	$sql->finish();
+} 
+
 sub itemsC( $ )
 {
 	my ($esto, $NmrC) = @_;	
@@ -296,30 +310,29 @@ sub numeroC( )
 
 sub agregaCmp( $ $ $ $ $ $ $ $)
 {
-	my ($esto,$Numero,$RUT,$Fecha,$TipoF,$Dcmnt,$Total,$Neto,$Iva) = @_;	
+	my ($esto,$Nmr,$RUT,$Fecha,$TipoF,$Dcmnt,$Total,$Neto,$Iva,$rlc) = @_;	
 	my $bd = $esto->{'baseDatos'};
 
-	# Graba datos basicos del Comprobante
-	my $sql = $bd->prepare("INSERT INTO Compras VALUES(?,?,?,?,?,?,?,?);");
-	$sql->execute($Numero,$RUT,$Fecha,$TipoF,$Dcmnt,$Total,$Neto,$Iva);
+	# Graba datos generales del documento
+	my $sql = $bd->prepare("INSERT INTO Compras VALUES(?,?,?,?,?,?,?,?,?,?);");
+	$rlc = ($TipoF eq 'M' or $TipoF eq 'E') ? 1 : 0 ;
+	$sql->execute($Nmr,$RUT,$Fecha,$TipoF,$Dcmnt,$Total,$Neto,$Iva,$rlc,'');
 	# Graba items desde el archivo temporal
 	$bd->do("INSERT INTO ItemsC SELECT Numero,CodigoP,Cantidad,UnidadM,
-		ValorT,ValorU FROM ItemsT WHERE Numero = $Numero ;") ;
+		ValorT,ValorU FROM ItemsT WHERE Numero = $Nmr ;") ;
 	# Borra datos temporales
 	$bd->do("DELETE FROM ItemsT");
-
 }
 
-sub agregaItemT( $ $ $ $ $ $ $ )
+sub agregaItemT($ $ $ $ $ $ $ $ $)
 {
-	my ($esto,$Numero,$Codigo,$Cantidad,$UM,$Monto,$MU,$Cuenta) = @_;	
+	my ($esto,$Nmr,$Cdg,$Cntd,$UM,$MNT,$MU,$Prd,$Dsct,$Monto) = @_;	
 	my $bd = $esto->{'baseDatos'};
 	my $sql;
 
-	$sql = $bd->prepare("INSERT INTO ItemsT VALUES(?,?,?,?,?,?,?);");
-	$sql->execute($Numero, $Codigo, $Cantidad, $UM, $Monto, $MU, $Cuenta );
+	$sql = $bd->prepare("INSERT INTO ItemsT VALUES(?,?,?,?,?,?,?,?,?);");
+	$sql->execute($Nmr,$Cdg,$Cntd,$UM,$MNT,$MU,$Prd,$Dsct,$Monto);
 	$sql->finish();
-
 } 
 
 # FACTURAS Ventas o Compras
