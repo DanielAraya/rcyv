@@ -1,9 +1,9 @@
-#  Comandas.pm - 
+#  RegistraNC.pm - 
 #
-#	Creado: 15/06/2014 
-#	UM: 15/06/2014
+#	Creado: 02/08/2014 
+#	UM: 02/08/2014
 
-package Comandas;
+package RegistraNC;
 
 #use Tk::TList;
 #use Tk::LabEntry;
@@ -18,7 +18,7 @@ sub crea {
 	$esto->{'baseDatos'} = $bd;
 	$esto->{'mensajes'} = $ut;
 
-	$ut->mError("Aún no se ha programado");
+	$ut->mError("No está programado");
 	
 	bless $esto;
 	return $esto;

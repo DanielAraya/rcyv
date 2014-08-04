@@ -15,7 +15,7 @@ use Number::Format;
 # Datos a registrar
 my ($Numero,$Id,$Fecha,$Neto,$Iva,$Total,$Nombre,$TipoF,$NmrI,$Descuento) ;
 my ($Mnsj,$Codigo,$Monto,$RUT,$Dcmnt,$Prod,$Cantidad,$UM,$MU,$MNT);
-my ($Dsct, $MntP, $pIva) ;
+my ($Dsct, $MntP) ;
 # Campos
 my ($codigo,$detalle,$fecha,$neto,$iva,$um,$mu,$fe,$fm,$gd,$bc,$ot,$mnt);
 my ($descuento,$dsct,$mntP) ;
@@ -27,12 +27,10 @@ my @datosP = () ;	# Datos de un producto
 my @datos = () ;	# List de items comprados
 # Formato de números
 my $pesos = new Number::Format(-thousands_sep => '.', -decimal_point => ',');
-
-$pIva = 0.19 ;
 	
 sub crea {
 
-	my ($esto, $vp, $bd, $ut, $mt ) = @_;
+	my ($esto, $vp, $bd, $ut, $mt, $pIva) = @_;
 
 	$esto = {};
 	$esto->{'baseDatos'} = $bd;

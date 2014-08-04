@@ -1,7 +1,7 @@
 #  Utiles.pm - Paquete de funciones comunes varias
 #  
 #	Creado : 02/06/2014 
-#   UM : 12.07.2014 
+#   UM : 02/08/2014 
 
 package Utiles;
 
@@ -73,13 +73,6 @@ sub ayuda
 		}
 		$i += 1;
 	} 
-}
-
-sub tablaD ( )
-{
-	my %td = ('FC' => "Compras" , 'FV' => "Ventas" , 'FE' => "Compras" , 
-		'FR' => "Ventas" , 'BH' => "BoletasH" , 'LT' => "Docs", 'CH' => "Docs") ;
-	return %td ;
 }
 
 sub mError
@@ -160,14 +153,16 @@ sub fechaHoy( )
 sub cFecha( $ )
 {
 	my ($esto, $ff) = @_;
-	my ($dm, $mes, $a);
+#	my ($dm, $mes, $a);
 
 	if (not $ff) { return "";}
-	$a = substr $ff,0,4;
-	$mes = substr $ff,4,2;
-	$dm = substr $ff,6,2;
+	my @cmp = split /-/, $ff ;
 	
-	return "$dm/$mes/$a";
+	return "$cmp[2]/$cmp[1]/$cmp[0]";
+#	$a = substr $ff,0,4;
+#	$mes = substr $ff,5,2;
+#	$dm = substr $ff,8,2;
+#	return "$dm/$mes/$a";
 }
 
 sub analizaFecha ( $ ) 
@@ -175,10 +170,8 @@ sub analizaFecha ( $ )
 	my ($esto, $ff) = @_;
 	# La fecha debe pasar en el formato "dd/mm/aaaa"
 	my @cmp = split /\//, $ff ;
-	# Devuelve una fecha válida o 'undef' en caso contrario
+	# Devuelve una fecha válida (aaaa-mm-dd) o 'undef' en caso contrario
 	$ff = ymd($cmp[2],$cmp[1],$cmp[0]) ;
-	# Convierte a formato AAAAMMDD si es válida
-	$ff =~ s/-//g if $ff ;
 	return $ff ;
 }
 
@@ -195,8 +188,7 @@ sub meses
 	my @m = ( ['01','Enero'], ['02','Febrero'], ['03','Marzo'],
 		['04','Abril'], ['05','Mayo'], ['06','Junio'], ['07','Julio'], 
 		['08','Agosto'], ['09','Septiembre'], ['10','Octubre'], 
-		['11','Noviembre'], ['12','Diciembre'], ['0','Todos'] ) ;
-	
+		['11','Noviembre'], ['12','Diciembre'] ) ;
 	return @m ;
 }
 

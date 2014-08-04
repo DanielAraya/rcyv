@@ -1,9 +1,9 @@
-#  Comandas.pm - 
+#  GDespacho.pm - 
 #
-#	Creado: 15/06/2014 
-#	UM: 15/06/2014
+#	Creado: 01/08/2014 
+#	UM: 01/08/2014
 
-package Comandas;
+package GDespacho;
 
 #use Tk::TList;
 #use Tk::LabEntry;
@@ -18,7 +18,7 @@ sub crea {
 	$esto->{'baseDatos'} = $bd;
 	$esto->{'mensajes'} = $ut;
 
-	$ut->mError("Aún no se ha programado");
+	$ut->mError("No está desarrollado");
 	
 	bless $esto;
 	return $esto;

@@ -1,7 +1,7 @@
 #  BaseDatos.pm - Manejo de la base de datos en SQLite 3.2 o superior
 #
 #	Creado : 02/06/2014 
-#	UM : 29/07/2014
+#	UM : 02/08/2014
 
 package BaseDatos;
 
@@ -308,6 +308,16 @@ sub numeroC( )
 	return $dato; 
 }
 
+sub agregaF( $ $ $ $ $ $ $ $ $)
+{
+	my ($esto,$Nmr,$RUT,$Fch,$TF,$Dcmnt,$Ttl,$Nt,$Iva,$Gls) = @_;	
+	my $bd = $esto->{'baseDatos'};
+
+	# Graba datos generales del documento
+	my $sql = $bd->prepare("INSERT INTO Compras VALUES(?,?,?,?,?,?,?,?,?,?);");
+	$sql->execute($Nmr,$RUT,$Fch,$TF,$Dcmnt,$Ttl,$Nt,$Iva,1,$Gls);
+}
+
 sub agregaCmp( $ $ $ $ $ $ $ $)
 {
 	my ($esto,$Nmr,$RUT,$Fecha,$TipoF,$Dcmnt,$Total,$Neto,$Iva,$rlc) = @_;	
@@ -335,8 +345,27 @@ sub agregaItemT($ $ $ $ $ $ $ $ $)
 	$sql->finish();
 } 
 
+sub datosLC( $ )
+{
+	my ($esto,$mes) = @_ ;
+
+	my $bd = $esto->{'baseDatos'};
+	my @datos = () ;
+	
+	my $sql = $bd->prepare("SELECT c.*, p.Nombre FROM Compras AS c ,
+		Proveedores AS p WHERE c.RutP = p.RUT AND strftime('%m',c.Fecha) 
+		= ? AND c.RegistraLC ;" );
+	$sql->execute($mes);
+	while (my @fila = $sql->fetchrow_array) {
+		push @datos, \@fila;
+	}
+	$sql->finish();
+
+	return @datos; 	
+}
+
 # FACTURAS Ventas o Compras
-sub buscaDC( $ $ $ $ )
+sub buscaDC( $ $ )
 {
 	my ($esto, $rut, $doc) = @_;	
 	my $bd = $esto->{'baseDatos'};
@@ -347,6 +376,19 @@ sub buscaDC( $ $ $ $ )
 	$sql->finish();
 
 	return $dato; 
+}
+
+sub datosF( $ $ )
+{
+	my ($esto, $rut, $doc) = @_;	
+	my $bd = $esto->{'baseDatos'};
+
+	my $sql = $bd->prepare("SELECT * FROM Compras WHERE RutP = ? AND Factura = ?;");
+	$sql->execute($rut, $doc);
+	my @dato = $sql->fetchrow_array;
+	$sql->finish();
+
+	return @dato; 
 }
 
 sub listaFct( $ $ $ $)

@@ -4,7 +4,7 @@
 #	Programa de Registro de Compras y Ventas para negocios tipo cafetería
 #  
 #	Creado : 02/06/2014
-#	UM : 23/07/2014 
+#	UM : 03/08/2014 
 
 use prg::BaseDatos;
 use strict;
@@ -15,19 +15,24 @@ use Tk::BrowseEntry ;
 use prg::Utiles ;
 use Encode 'decode_utf8' ;
 use Date::Simple ('ymd','today');
+use YAML::Tiny ;
+
+my $config = YAML::Tiny->new ;
+$config = YAML::Tiny->read('config.yml');
 
 my @aa = split /-/, today() ; # Fecha del día como arreglo
 
-my $version = " central.pl v 0.3 al 16/06/2014";
+my $version = " central.pl v 0.4 al 16/06/2014";
 my $pv = sprintf("Perl %vd", $^V) ;
 
 # Define variables básicas
-my ($bd,$prd,$vnt,$Titulo,$base,$lt,$lp,$lg,$lu,$TipoL);
+my ($bd,$prd,$vnt,$Titulo,$base,$lt,$lp,$lg,$lu,$TipoL,$pIva);
 $TipoL = '';
 $prd = $aa[0] ; # Extrae el año en curso
-$Titulo = 'Café & Canela';
-$base = "data/$prd.db3";
+$Titulo = $config->[0]->{Empresa} ;
+$pIva = $config->[0]->{Iva} / 100 ;
 
+$base = "data/$prd.db3";
 $bd = BaseDatos->crea($base);
 
 # Crea la ventana principal
@@ -126,10 +131,9 @@ sub opConfigura {
 }
 
 sub opRegistra {
-[['command' => "Compras", -command => sub { require prg::Compras;
-	Compras->crea($vp, $bd, $ut, $mt); } ],
- ['command' => "Otras facturas", -command => sub { require prg::Gastos; 
-	Gastos->crea($vp, $bd, $ut, $mt ); } ], 
+[['command' => "Compra insumos", -command => sub { require prg::Compras;
+	Compras->crea($vp, $bd, $ut, $mt, $pIva); } ],
+ ['cascade' => "Otras compras", -tearoff => 0, -menuitems => opOtras() ], 
  ['cascade' => "Devoluciones", -tearoff => 0, -menuitems => opDevuelve()], 
  "-", 
  ['command' => "Comandas", -command => sub { require prg::Comandas; 
@@ -141,18 +145,27 @@ sub opRegistra {
 	DatosT->crea($vp, $bd, $ut, $mt); } ] ]
 }
 
+sub opOtras {
+[['command' => "Factura", -command => sub { require prg::Gastos;
+	Gastos->crea($vp, $bd, $ut, $mt, $pIva);} ], 
+ ['command' => "Nota Crédito", -command => sub { require prg::NotaC;
+ 	NotaC->crea($vp, $bd, $ut, $mt, $pIva);} ]]
+}
+
 sub opDevuelve {
-[['command' => "Emite ND", -command => sub { require prg::ECompras;
-	ECompras->crea($vp, $mt, $ut, $bd);} ], 
- ['command' => "Registra NC", -command => sub { require prg::EVentas;
- 	EVentas->crea($vp, $mt, $ut, $bd);} ]]
+[['command' => "Emite ND", -command => sub { require prg::EmiteND;
+	EmiteND->crea($vp, $bd, $ut, $mt);} ], 
+ ['command' => "Registra NC", -command => sub { require prg::RegistraNC;
+ 	RegistraNC->crea($vp, $bd, $ut, $mt);} ]]
 }
 
 sub opConsulta {
 [ ['command' => "Resultados", -command => sub { require prg::Resultado;
  	Resultado->crea($vp, $mt, $ut, $bd);} ], 
   ['cascade' => "Resúmenes", -tearoff => 0, -menuitems => opResumen() ],
-  ['cascade' => "Estadísticas", -tearoff => 0, -menuitems => opEstadis() ] ]
+  ['cascade' => "Estadísticas", -tearoff => 0, -menuitems => opEstadis() ] ,
+   '-',
+   ['cascade' => "Listados", -tearoff => 0, -menuitems => opListas()] ]
 }
 
 sub opResumen {
@@ -169,6 +182,13 @@ sub opEstadis {
 	ECompras->crea($vp, $mt, $ut, $bd);} ], 
  ['command' => "Ventas", -command => sub { require prg::EVentas;
  	EVentas->crea($vp, $mt, $ut, $bd);} ]]
+}
+
+sub opListas {
+[['command' => "Libro Compras", -command => sub { require prg::LCompras;
+	LCompras->crea($vp, $mt, $ut, $bd, $Titulo);} ], 
+ ['command' => "Guías Despacho", -command => sub { require prg::GDespacho;
+ 	GDespacho->crea($vp, $mt, $ut, $bd);} ]]
 }
 
 sub listados ( $ )
