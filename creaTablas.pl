@@ -5,7 +5,7 @@
 #	Se ejecuta indicado el año como dato de entrada
 #
 #	Creación : 02.06.2014
-#	UM : 23.07.2014 
+#	UM : 06.08.2014 
 
 use DBI;
 use strict;
@@ -21,6 +21,7 @@ if (not -d $emp) { # Verifica si existe el directorio
 	mkdir $emp ;
 	mkdir "$emp/txt";
 	mkdir "$emp/csv";
+	mkdir "$emp/ods";
 	mkdir "$emp/pdf";
 }
 
@@ -84,6 +85,23 @@ $bd->do("CREATE TABLE ItemsC (
 	UnidadM char(2),
 	ValorT int(7),
 	ValorU int(5) )" );
+
+# Nota de Devolución
+$bd->do("CREATE TABLE Devuelve (
+	Numero int(5),
+	RutP char(10),
+	Fecha char(10),
+	Factura char(10),
+	Total int(8),
+	NotaC int(5) )" );
+
+# Detalle Compras
+$bd->do("CREATE TABLE ItemsD (
+	Numero int(5),
+	CodigoP char(4),
+	Cantidad int(4),
+	UnidadM char(2),
+	ValorT int(7) )" );
 
 # Desconecta la base de datos
 $bd->disconnect;

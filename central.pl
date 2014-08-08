@@ -4,7 +4,7 @@
 #	Programa de Registro de Compras y Ventas para negocios tipo cafetería
 #  
 #	Creado : 02/06/2014
-#	UM : 03/08/2014 
+#	UM : 07/08/2014 
 
 use prg::BaseDatos;
 use strict;
@@ -22,7 +22,7 @@ $config = YAML::Tiny->read('config.yml');
 
 my @aa = split /-/, today() ; # Fecha del día como arreglo
 
-my $version = " central.pl v 0.4 al 16/06/2014";
+my $version = " central.pl v 0.5 al 08/08/2014";
 my $pv = sprintf("Perl %vd", $^V) ;
 
 # Define variables básicas
@@ -186,7 +186,7 @@ sub opEstadis {
 
 sub opListas {
 [['command' => "Libro Compras", -command => sub { require prg::LCompras;
-	LCompras->crea($vp, $mt, $ut, $bd, $Titulo);} ], 
+	LCompras->crea($vp, $mt, $ut, $bd, $Titulo, $prd);} ], 
  ['command' => "Guías Despacho", -command => sub { require prg::GDespacho;
  	GDespacho->crea($vp, $mt, $ut, $bd);} ]]
 }

@@ -7,7 +7,7 @@ print "Verificando módulos: \n";
 
 my @modules = qw(Tk Tk::TableMatrix Tk::BrowseEntry Tk::NoteBook 
 	DBI DBD::SQLite  Encode Number::Format Date::Simple  
-	Data::Dumper PDF::API2 );
+	Data::Dumper PDF::API2 YAML::Tiny OpenOffice::OODoc);
 for my $module (@modules) {
   eval "require $module";
   my $ok = '';

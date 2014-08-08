@@ -23,12 +23,13 @@ long_line_behaviour=1
 long_line_column=72
 
 [files]
-current_page=4
-FILE_NAME_0=6932;Perl;0;EISO-8859-1;1;1;0;%2Fhome%2Fdaniel%2FProgramas%2Frcyv%2Fcentral.pl;0;4
-FILE_NAME_1=1345;Perl;0;EUTF-8;1;1;0;%2Fhome%2Fdaniel%2FProgramas%2Frcyv%2FcreaTablas.pl;0;4
-FILE_NAME_2=561;Perl;0;EUTF-8;1;1;0;%2Fhome%2Fdaniel%2FProgramas%2Frcyv%2Fprg%2FBaseDatos.pm;0;4
+current_page=5
+FILE_NAME_0=165;Perl;0;EISO-8859-1;1;1;0;%2Fhome%2Fdaniel%2FProgramas%2Frcyv%2Fcentral.pl;0;4
+FILE_NAME_1=1995;Perl;0;EUTF-8;1;1;0;%2Fhome%2Fdaniel%2FProgramas%2Frcyv%2FcreaTablas.pl;0;4
+FILE_NAME_2=8257;Perl;0;EUTF-8;1;1;0;%2Fhome%2Fdaniel%2FProgramas%2Frcyv%2Fprg%2FBaseDatos.pm;0;4
 FILE_NAME_3=3670;Perl;0;EISO-8859-1;1;1;0;%2Fhome%2Fdaniel%2FProgramas%2Frcyv%2Fprg%2FUtiles.pm;0;4
-FILE_NAME_4=649;Perl;0;EISO-8859-1;1;1;0;%2Fhome%2Fdaniel%2FProgramas%2Frcyv%2Fprg%2FLCompras.pm;0;4
+FILE_NAME_4=10167;Perl;0;EISO-8859-1;1;1;0;%2Fhome%2Fdaniel%2FProgramas%2Frcyv%2Fprg%2FEmiteND.pm;0;4
+FILE_NAME_5=91;Perl;0;EISO-8859-1;1;1;0;%2Fhome%2Fdaniel%2FProgramas%2Frcyv%2Fprg%2FNotaC.pm;0;4
 
 [VTE]
 last_dir=/home/daniel/Programas/rcyv

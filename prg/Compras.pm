@@ -1,7 +1,7 @@
 #  Compras.pm - Registra las compras de productos o servicios
 #
 #	Creado: 15/06/2014 
-#	UM: 27/07/2014
+#	UM: 06/08/2014
 
 package Compras;
 
@@ -40,7 +40,7 @@ sub crea {
 
 	# Inicializa variables
 	my %tp = $ut->tipos();
-	$Numero = $bd->numeroC() + 1;
+	$Numero = $bd->numeroC('Compras') + 1;
 	$FechaC = $ut->fechaHoy();
 	inicializaV();
 

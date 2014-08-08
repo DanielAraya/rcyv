@@ -1,7 +1,7 @@
 #  BaseDatos.pm - Manejo de la base de datos en SQLite 3.2 o superior
 #
 #	Creado : 02/06/2014 
-#	UM : 02/08/2014
+#	UM : 06/08/2014
 
 package BaseDatos;
 
@@ -233,6 +233,32 @@ $bd->do("CREATE TEMPORARY TABLE ItemsT (
 	Monto int(7) )" );
 }
 
+sub creaTempD( )
+{
+	my ($esto) = @_;	
+	my $bd = $esto->{'baseDatos'};
+
+$bd->do("CREATE TEMPORARY TABLE ItemsT (
+	Numero int(5),
+	CodigoP char(4),
+	Cantidad int(4),
+	UnidadM char(2),
+	ValorT int(7),
+	ValorU int(5),
+	NombreP char(35) )" );
+}
+
+sub grabaItemD($ $ $ $ $ $ $ )
+{
+	my ($esto,$Cdg,$Cntd,$UM,$MU,$Prd,$Mnt,$Id) = @_;	
+	my $bd = $esto->{'baseDatos'};
+
+	my $sql = $bd->prepare("UPDATE ItemsT SET CodigoP = ?, Cantidad = ?, 
+		UnidadM = ?, ValorT = ?, ValorU = ?, NombreP = ? WHERE ROWID = ?;");
+	$sql->execute($Cdg,$Cntd,$UM,$Mnt,$MU,$Prd,$Id);
+	$sql->finish();
+} 
+
 sub borraTemp( )
 {
 	my ($esto) = @_;	
@@ -295,12 +321,12 @@ sub itemsC( $ )
 	return @datos; 
 }	
 
-sub numeroC( )
+sub numeroC( $ )
 {
-	my ($esto) = @_;	
+	my ($esto, $tbl) = @_;	
 	my $bd = $esto->{'baseDatos'};
 
-	my $sql = $bd->prepare("SELECT max(Numero) FROM Compras;");
+	my $sql = $bd->prepare("SELECT max(Numero) FROM $tbl;");
 	$sql->execute();
 	my $dato = $sql->fetchrow_array;
 	$sql->finish();
@@ -334,6 +360,21 @@ sub agregaCmp( $ $ $ $ $ $ $ $)
 	$bd->do("DELETE FROM ItemsT");
 }
 
+sub agregaND( $ $ $ $ $ )
+{
+	my ($esto, $Nmr, $RUT, $Fecha, $Dcmnt, $Total) = @_;	
+	my $bd = $esto->{'baseDatos'};
+
+	# Graba datos generales del documento
+	my $sql = $bd->prepare("INSERT INTO Devuelve VALUES(?,?,?,?,?,?);");
+	$sql->execute($Nmr, $RUT, $Fecha, $Dcmnt, $Total, 0);
+	# Graba items desde el archivo temporal
+	$bd->do("INSERT INTO ItemsD SELECT Numero,CodigoP,Cantidad,UnidadM,
+		ValorT FROM ItemsT WHERE Numero = $Nmr ;") ;
+	# Borra datos temporales
+	$bd->do("DELETE FROM ItemsT");
+}
+
 sub agregaItemT($ $ $ $ $ $ $ $ $)
 {
 	my ($esto,$Nmr,$Cdg,$Cntd,$UM,$MNT,$MU,$Prd,$Dsct,$Monto) = @_;	
@@ -362,6 +403,18 @@ sub datosLC( $ )
 	$sql->finish();
 
 	return @datos; 	
+}
+
+sub itemsDev ( $ ) {
+
+	my ($esto,$nmr) = @_ ;
+
+	my $bd = $esto->{'baseDatos'};
+	my @datos = () ;
+
+	$bd->do("INSERT INTO ItemsT SELECT i.Numero, i.CodigoP, i.Cantidad,
+		i.UnidadM, i.ValorT, i.ValorU, p.Nombre FROM ItemsC AS i,
+		Productos AS p WHERE i.Numero = $nmr AND i.CodigoP = p.Codigo;") ;
 }
 
 # FACTURAS Ventas o Compras

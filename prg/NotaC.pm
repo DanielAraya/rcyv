@@ -1,7 +1,7 @@
 #  NotaC.pm - Registra Nota de Crédito por otras facturas
 #
 #	Creado: 02/08/2014 
-#	UM: 03/08/2014
+#	UM: 07/08/2014
 
 package NotaC;
 
@@ -11,15 +11,15 @@ use Number::Format;
 
 # Datos a registrar
 my ($NC,$Fecha,$Neto,$Iva,$Total,$Nombre,$TipoF,$RUT,$Dcmnt,$FechaNC) ;
-my ($Mnsj,$Numero);
+my ($Mnsj,$Numero,$Parcial);
 # Campos
-my ($nc,$fecha,$neto,$iva,$total,$nombre,$rut,$dcmnt,$fechaNC);
+my ($nc,$fecha,$neto,$iva,$total,$nombre,$rut,$dcmnt,$fechaNC,$pr);
 # Botones
 my ($bNvo, $bGrb, $bCan) ; 
 	
 sub crea {
 
-	my ($esto, $vp, $bd, $ut, $mt, $pIva) = @_;
+	my ($esto, $vp, $bd, $ut, $mt, $pIVA) = @_;
 	
 	$esto = {};
 	$esto->{'baseDatos'} = $bd;
@@ -29,7 +29,7 @@ sub crea {
 
 	# Inicializa variables
 	my %tp = $ut->tipos();
-	$Numero = $bd->numeroC() + 1;
+	$Numero = $bd->numeroC('Compras') + 1;
 	$TipoF = 'C';
 	inicializaV();
 	
@@ -69,26 +69,30 @@ sub crea {
 	$dcmnt = $mDatosC->LabEntry(-label => "Factura # ", -width => 12,
 		-labelPack => [-side => "left", -anchor => "w"], -bg => '#FFFFCC',
 		-textvariable => \$Dcmnt);
-	$rut = $mDatosC->LabEntry(-label => "RUT: ", -width => 15,
+	$rut = $mDatosC->LabEntry(-label => "  RUT: ", -width => 15,
 		-labelPack => [-side => "left", -anchor => "w"], -bg => '#FFFFCC',
 		-justify => 'left', -textvariable => \$RUT);
+	$pr = $mDatosC->Checkbutton( -text => "Parcial", -variable => \$Parcial,
+		-command => sub { $neto->configure(-state => 'normal' );
+			$iva->configure(-state => 'normal' );
+			$total->configure(-state => 'normal' ); $neto->focus ;} );
 
-	$fecha = $mDatosL2->LabEntry(-label => " Fecha:", -width => 10,
+	$fecha = $mDatosL2->LabEntry(-label => "Fecha:", -width => 10,
 		-labelPack => [-side => "left", -anchor => "w"], #-bg => '#FFFFCC',
 		-textvariable => \$Fecha, -state => 'disabled',
 		-disabledbackground => '#FFFFFC', -disabledforeground => '#000000' );
 	$nombre = $mDatosL2->Label(-textvariable => \$Nombre, -font => $tp{tx});
 
 	$neto = $mDatosL3->LabEntry(-label => "Neto: ", -width => 12,
-		-labelPack => [-side => "left", -anchor => "w"], #-bg => '#FFFFCC',
+		-labelPack => [-side => "left", -anchor => "w"], -bg => '#FFFFCC',
 		-justify => 'right', -textvariable => \$Neto, -state => 'disabled',
 		-disabledbackground => '#FFFFFC', -disabledforeground => '#000000');
 	$iva = $mDatosL3->LabEntry(-label => " IVA: ", -width => 12,
-		-labelPack => [-side => "left", -anchor => "w"], #-bg => '#FFFFCC',
+		-labelPack => [-side => "left", -anchor => "w"], -bg => '#FFFFCC',
 		-justify => 'right', -textvariable => \$Iva, -state => 'disabled',
 		-disabledbackground => '#FFFFFC', -disabledforeground => '#000000' );
 	$total = $mDatosL3->LabEntry(-label => " Total: ", -width => 12,
-		-labelPack => [-side => "left", -anchor => "w"], #-bg => '#FFFFCC',
+		-labelPack => [-side => "left", -anchor => "w"], -bg => '#FFFFCC',
 		-justify => 'right', -textvariable => \$Total, -state => 'disabled',
 		-disabledbackground => '#FFFFFC', -disabledforeground => '#000000' );
 	$nc = $mDatosL4->LabEntry(-label => " NC #: ", -width => 10,
@@ -104,11 +108,14 @@ sub crea {
 	
 	# Habilita validación de datos
 	$rut->bind("<FocusOut>", sub { &buscaF($esto) } );
+	$neto->bind("<FocusOut>", sub { $Iva = sprintf("%.0f", $pIVA * $Neto ); } );
+	$iva->bind("<FocusOut>", sub { $Total = $Neto + $Iva ; } );	
 	$fechaNC->bind("<FocusIn>", sub { $bGrb->configure(-state => 'active'); } );
 
 	# Dibuja interfaz	
 	$dcmnt->pack(-side => 'left', -expand => 0, -fill => 'none');
 	$rut->pack(-side => 'left', -expand => 0, -fill => 'none');
+	$pr->pack(-side => 'left', -expand => 0, -fill => 'none');
 	
 	$fecha->pack(-side => 'left', -expand => 0, -fill => 'none');
 
@@ -144,7 +151,7 @@ sub crea {
 
 sub inicializaV ( )
 {
-	$Total = $Neto = $Iva = 0;
+	$Total = $Neto = $Iva = $Parcial = 0 ;
 	$Dcmnt = $RUT = $Fecha = $FechaNC = $NC = '';
 	$Nombre = '                    ';
 
