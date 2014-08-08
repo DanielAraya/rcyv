@@ -333,7 +333,7 @@ sub graba ( )
 	$listaS->delete(0,'end');
 	# Inicializa variables
 	inicializaV();
-	$Numero = $bd->numeroC() + 1;
+	$Numero = $bd->numeroC('Devuelve') + 1;
 	$Dcmnt = '' ; 
 	$dcmnt->focus;
 }

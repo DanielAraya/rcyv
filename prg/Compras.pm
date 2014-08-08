@@ -561,7 +561,7 @@ sub graba ( )
 			-text => "No hay movimientos registrados" ) ;
 	# Inicializa variables
 	inicializaV();
-	$Numero = $bd->numeroC() + 1;
+	$Numero = $bd->numeroC('Compras') + 1;
 	$Dcmnt = '' ; 
 	$dcmnt->focus;
 }

@@ -29,7 +29,7 @@ sub crea {
 
 	# Inicializa variables
 	my %tp = $ut->tipos();
-	$Numero = $bd->numeroC() + 1;
+	$Numero = $bd->numeroC('Compras') + 1;
 #	$FechaC = $ut->fechaHoy();
 	inicializaV();
 	
@@ -235,7 +235,7 @@ sub otra ( ) {
 	$bNvo->configure(-state => 'disabled');
 	# Inicializa variables
 	inicializaV();
-	$Numero = $bd->numeroC() + 1;
+	$Numero = $bd->numeroC('Compras') + 1;
 	$dcmnt->focus;
 }
 

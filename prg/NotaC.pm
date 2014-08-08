@@ -241,7 +241,7 @@ sub otra ( ) {
 	$bNvo->configure(-state => 'disabled');
 	# Inicializa variables
 	inicializaV();
-	$Numero = $bd->numeroC() + 1;
+	$Numero = $bd->numeroC('Compras') + 1;
 	$dcmnt->focus;
 }
 
